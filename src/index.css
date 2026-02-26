@@ -1,3 +1,83 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer components {
+  .project-card {
+    --project-glow-rgb: 148, 163, 184;
+    position: relative;
+    isolation: isolate;
+    border-color: rgba(226, 232, 240, 0.92);
+    box-shadow:
+      0 10px 24px -24px rgba(15, 23, 42, 0.22),
+      0 0 0 1px rgba(255, 255, 255, 0.55) inset;
+    transition:
+      box-shadow 220ms ease,
+      border-color 220ms ease,
+      transform 220ms ease;
+  }
+
+  .project-card > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  .project-card:hover {
+    border-color: rgba(203, 213, 225, 0.95);
+    box-shadow:
+      0 14px 30px -24px rgba(15, 23, 42, 0.26),
+      0 0 0 1px rgba(255, 255, 255, 0.55) inset;
+  }
+
+  .project-card--with-image {
+    border-color: rgba(var(--project-glow-rgb), 0.24);
+    background-color: rgba(248, 250, 252, 0.94);
+    background-image: linear-gradient(160deg, rgba(var(--project-glow-rgb), 0.07) 0%, rgba(var(--project-glow-rgb), 0.025) 42%, rgba(255, 255, 255, 0) 74%);
+    box-shadow:
+      0 10px 24px -22px rgba(15, 23, 42, 0.2),
+      0 0 0 1px rgba(var(--project-glow-rgb), 0.2),
+      0 14px 26px -24px rgba(var(--project-glow-rgb), 0.48),
+      0 0 20px -14px rgba(var(--project-glow-rgb), 0.42),
+      0 0 0 1px rgba(255, 255, 255, 0.5) inset;
+  }
+
+  .project-card--with-image:hover {
+    border-color: rgba(var(--project-glow-rgb), 0.32);
+    box-shadow:
+      0 14px 30px -22px rgba(15, 23, 42, 0.22),
+      0 0 0 1px rgba(var(--project-glow-rgb), 0.28),
+      0 20px 34px -24px rgba(var(--project-glow-rgb), 0.58),
+      0 0 26px -12px rgba(var(--project-glow-rgb), 0.5),
+      0 0 0 1px rgba(255, 255, 255, 0.52) inset;
+  }
+
+  .project-card--with-image::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    background:
+      radial-gradient(95% 72% at 82% -6%, rgba(var(--project-glow-rgb), 0.16), rgba(255, 255, 255, 0) 66%),
+      radial-gradient(78% 62% at 8% 102%, rgba(var(--project-glow-rgb), 0.09), rgba(255, 255, 255, 0) 74%),
+      linear-gradient(150deg, rgba(255, 255, 255, 0.38) 0%, rgba(255, 255, 255, 0) 48%);
+    opacity: 0.46;
+    transition:
+      opacity 220ms ease,
+      transform 220ms ease;
+  }
+
+  .project-card--with-image:hover::before {
+    opacity: 0.58;
+    transform: scale(1.01);
+  }
+
+  .project-card__media {
+    border-color: rgba(var(--project-glow-rgb), 0.22);
+    box-shadow:
+      0 0 0 1px rgba(255, 255, 255, 0.5) inset,
+      0 0 0 1px rgba(var(--project-glow-rgb), 0.14),
+      0 8px 20px -22px rgba(var(--project-glow-rgb), 0.44);
+  }
+}
