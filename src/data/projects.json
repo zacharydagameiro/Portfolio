@@ -293,9 +293,10 @@
     "slug": "celestia-affirmations-astrology",
     "title": "Celestia",
     "caption": "Astrology + Daily Affirmations App",
-    "shortDescription": "Co-designed a mobile app concept that combines daily affirmations with personalized astrology content.",
-    "description": "Co-designed and prototyped Celestia, a mobile app that combines daily affirmations with personalized astrology content. Built Explore and content discovery UI (including a Masonry-style grid bottom sheet) and explored subscription and token-based content unlock models.",
-    "longDescription": "Co-developed \"Celestia,\" a mobile app concept combining daily affirmations and astrology content. Designed feature set and monetization options (subscriptions/tokens/content unlocks) and planned modular content delivery. Built and implemented UI work like an Explore bottom sheet with a Masonry grid layout; explored enhancements like category captions and interaction polish.",
+    "coverImageUrl": "/covers/celestia.jpg",
+    "shortDescription": "Built with a friend as a side mobile app concept combining daily affirmations with personalized astrology content.",
+    "description": "Built and prototyped Celestia with a friend as a side mobile app that combines daily affirmations with personalized astrology content. Implemented Explore and content discovery UI (including a Masonry-style grid bottom sheet) and explored subscription and token-based content unlock models.",
+    "longDescription": "Built \"Celestia\" with a friend as a side project: a mobile app concept combining daily affirmations and astrology content. Designed the feature set and monetization options (subscriptions/tokens/content unlocks) and planned modular content delivery. Built UI work including an Explore bottom sheet with a Masonry grid layout, plus interaction polish and category-caption ideas.",
     "year": "2025",
     "tags": [
       "React Native",
@@ -306,7 +307,7 @@
     "repoUrl": null,
     "demoUrl": null,
     "featured": false,
-    "category": "school"
+    "category": null
   },
   {
     "slug": "protein-pdb-viewer",
