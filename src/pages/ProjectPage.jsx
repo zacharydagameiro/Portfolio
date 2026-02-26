@@ -10,6 +10,67 @@ const DEFAULT_TITLE = 'Zachary Gameiro — CS Portfolio'
 const DEFAULT_PROJECT_IMAGE = resolveAssetUrl('/profile.jpg')
 const VIDEO_FILE_PATTERN = /\.(mp4|webm|ogg|mov|m4v)(\?.*)?$/i
 
+const ExternalLinkIcon = ({ className = 'h-3.5 w-3.5' }) => (
+  <svg className={className} fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor" aria-hidden>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5h6m0 0v6m0-6L10.5 13.5" />
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M10.5 6H8.25A3.75 3.75 0 0 0 4.5 9.75v6A3.75 3.75 0 0 0 8.25 19.5h6A3.75 3.75 0 0 0 18 15.75V13.5"
+    />
+  </svg>
+)
+
+const SidebarLinkIcon = ({ type, className = 'h-4 w-4' }) => {
+  if (type === 'google') {
+    return (
+      <svg className={className} viewBox="0 0 24 24" aria-hidden>
+        <path
+          fill="#EA4335"
+          d="M12 10.2v3.9h5.5c-.2 1.3-1.5 3.8-5.5 3.8-3.3 0-6-2.7-6-6s2.7-6 6-6c1.9 0 3.2.8 3.9 1.5l2.7-2.6C16.9 3.2 14.7 2.2 12 2.2 6.6 2.2 2.2 6.6 2.2 12s4.4 9.8 9.8 9.8c5.6 0 9.3-4 9.3-9.6 0-.6-.1-1.1-.2-1.6H12Z"
+        />
+        <path
+          fill="#34A853"
+          d="M2.2 12c0 5.4 4.4 9.8 9.8 9.8 5.6 0 9.3-4 9.3-9.6 0-.6-.1-1.1-.2-1.6H12v3.9h5.5c-.2 1.3-1.5 3.8-5.5 3.8-3.3 0-6-2.7-6-6Z"
+        />
+        <path fill="#FBBC05" d="M4.5 7.4 7.7 9.7c.9-1.8 2.5-3 4.3-3 1.9 0 3.2.8 3.9 1.5l2.7-2.6C16.9 3.2 14.7 2.2 12 2.2c-3.8 0-7.2 2.2-8.8 5.2Z" />
+        <path fill="#4285F4" d="M2.2 12c0 1.6.4 3.2 1.3 4.6l3.4-2.6c-.3-.6-.5-1.3-.5-2s.2-1.4.5-2L3.5 7.4A9.5 9.5 0 0 0 2.2 12Z" />
+      </svg>
+    )
+  }
+
+  if (type === 'repo') {
+    return (
+      <svg className={className} viewBox="0 0 16 16" fill="currentColor" aria-hidden>
+        <path d="M8 0C3.58 0 0 3.58 0 8a8.002 8.002 0 0 0 5.47 7.59c.4.08.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.95-.82-1.15-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.5-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82A7.56 7.56 0 0 1 8 3.8c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.002 8.002 0 0 0 16 8c0-4.42-3.58-8-8-8Z" />
+      </svg>
+    )
+  }
+
+  if (type === 'case-study') {
+    return (
+      <svg className={className} fill="none" viewBox="0 0 24 24" strokeWidth={1.7} stroke="currentColor" aria-hidden>
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          d="M19.5 7.5v9A2.25 2.25 0 0 1 17.25 18.75H6.75A2.25 2.25 0 0 1 4.5 16.5v-9A2.25 2.25 0 0 1 6.75 5.25h10.5A2.25 2.25 0 0 1 19.5 7.5Z"
+        />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 9h7.5m-7.5 3h7.5m-7.5 3h4.5" />
+      </svg>
+    )
+  }
+
+  return (
+    <svg className={className} fill="none" viewBox="0 0 24 24" strokeWidth={1.7} stroke="currentColor" aria-hidden>
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M3.75 12A8.25 8.25 0 0 1 12 3.75m0 0A8.25 8.25 0 0 1 20.25 12M12 3.75c2.2 2.12 3.5 5.02 3.5 8.25S14.2 18.13 12 20.25m0-16.5c-2.2 2.12-3.5 5.02-3.5 8.25S9.8 18.13 12 20.25m-7.85-5.25h15.7"
+      />
+    </svg>
+  )
+}
+
 const upsertMetaTag = (attribute, key, content) => {
   let tag = document.head.querySelector(`meta[${attribute}="${key}"]`)
   const existed = Boolean(tag)
@@ -24,7 +85,6 @@ const upsertMetaTag = (attribute, key, content) => {
 }
 
 export default function ProjectPage() {
-  const resumeUrl = resolveAssetUrl('/resume.pdf')
   const { slug } = useParams()
   const location = useLocation()
   const backToProjectsUrl = location.search ? `/projects${location.search}` : '/projects'
@@ -203,6 +263,41 @@ export default function ProjectPage() {
   const demoLink = toProjectLink(demoUrl)
   const repoLink = toProjectLink(repoUrl)
   const caseStudyLink = toProjectLink(caseStudyUrl)
+  const sidebarLinks = useMemo(() => {
+    const links = []
+    if (demoLink) {
+      const isGoogleHosted = /(?:^|\.)google\./i.test(demoLink.url) || /run\.app/i.test(demoLink.url)
+      links.push({
+        key: 'demo',
+        href: demoLink.url,
+        title: getProjectLinkText(demoLink),
+        text: getProjectLinkText(demoLink),
+        type: isGoogleHosted ? 'google' : 'demo',
+        useMonoText: false
+      })
+    }
+    if (repoLink) {
+      links.push({
+        key: 'repo',
+        href: repoLink.url,
+        title: repoLink.url,
+        text: repoLink.url,
+        type: 'repo',
+        useMonoText: true
+      })
+    }
+    if (caseStudyLink) {
+      links.push({
+        key: 'case-study',
+        href: caseStudyLink.url,
+        title: getProjectLinkText(caseStudyLink),
+        text: getProjectLinkText(caseStudyLink),
+        type: 'case-study',
+        useMonoText: false
+      })
+    }
+    return links
+  }, [caseStudyLink, demoLink, repoLink])
   const hasHeroLinks = Boolean(demoLink || repoLink || caseStudyLink)
   const problemText = longDescription || description || shortDescription
   const heroValueProp = valueProp || shortDescription
@@ -260,12 +355,12 @@ export default function ProjectPage() {
   }
 
   return (
-    <article className="pb-12">
+    <article className="overflow-x-clip pb-12">
       {/* Wider container on desktop; remove “boxed in whitespace” feel */}
-      {/* Negative top margin cancels Layout's mobile padding so the hero hugs the header */}
-      <div className="mx-auto max-w-6xl -mt-10 px-0 sm:mt-0 sm:px-6 lg:px-4">
-        {/* Desktop/tablet back link above the hero */}
-        <div className="hidden px-4 sm:block sm:px-0">
+      {/* Keep one consistent top offset across breakpoints */}
+      <div className="mx-auto max-w-6xl -mt-6 px-0 sm:px-6 lg:px-4">
+        {/* Back link above the hero across all breakpoints */}
+        <div className="px-4 sm:px-0">
           <Link to={backToProjectsUrl} className="mb-4 inline-block text-sm text-slate-600 hover:text-slate-900">
             ← Back to projects
           </Link>
@@ -280,12 +375,11 @@ export default function ProjectPage() {
             // Height: allow more room on smaller screens but shrink on desktop
             heroHeightClass,
 
-            // Mobile: full-bleed cover
-            'w-screen rounded-none',
-            'left-1/2 right-1/2 -ml-[50vw] -mr-[50vw]',
+            // Mobile: keep equal side padding and cap width to viewport minus gutters
+            'mx-auto w-full max-w-[calc(100vw-2rem)] rounded-2xl',
 
             // Desktop/tablet: normal layout
-            'sm:left-auto sm:right-auto sm:mx-0 sm:w-auto sm:rounded-2xl',
+            'sm:mx-0 sm:max-w-none sm:w-auto',
 
             // Spacing: flush on mobile, keep gap on desktop
             'mb-0 sm:mb-10'
@@ -314,22 +408,8 @@ export default function ProjectPage() {
 
           <div className="relative h-full">
             <div className="flex h-full w-full flex-col justify-end px-4 py-6 sm:px-8 sm:py-6">
-              {/* Mobile row 1: back button (left) + icon (right) */}
-              <div className="flex items-start justify-between sm:hidden">
-                <Link
-                  to={backToProjectsUrl}
-                  className="inline-flex items-center rounded-full bg-slate-950/40 px-3 py-1.5 text-xs font-medium text-slate-50 backdrop-blur hover:bg-slate-950/60"
-                >
-                  ← Back
-                </Link>
-
-                <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-slate-950/60 ring-2 ring-white/10">
-                  <ProjectIcon category={category} className={`h-5 w-5 ${iconColorClass}`} />
-                </div>
-              </div>
-
-              {/* Desktop row 1: icon in the top-left */}
-              <div className="hidden sm:flex">
+              {/* Row 1: icon in the top-left */}
+              <div className="flex">
                 <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-950/60 ring-2 ring-white/10">
                   <ProjectIcon category={category} className={`h-5 w-5 ${iconColorClass}`} />
                 </div>
@@ -350,7 +430,7 @@ export default function ProjectPage() {
                     {heroValueProp && <p className="mt-2 text-sm text-slate-100/95 sm:text-base">{heroValueProp}</p>}
 
                     {(year || quickFacts.length > 0 || status) && (
-                      <div className="mt-3 flex items-center gap-x-4 overflow-hidden whitespace-nowrap text-[11px] text-slate-100/85">
+                      <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 overflow-hidden text-[11px] text-slate-100/85 sm:flex-nowrap sm:gap-y-0 sm:whitespace-nowrap">
                         {year && <span className="shrink-0 font-semibold uppercase tracking-wide">{year}</span>}
 
                         {status && (
@@ -654,47 +734,34 @@ export default function ProjectPage() {
               <aside className="space-y-4 lg:sticky lg:top-24">
                 <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
                   <div className="space-y-4">
-                    {(demoLink || repoLink || caseStudyLink) && (
+                    {sidebarLinks.length > 0 && (
                       <div>
                         <h2 className="text-xs font-semibold uppercase tracking-wide text-slate-500">Links</h2>
-                        <div className="mt-2 flex flex-wrap gap-2">
-                          {demoLink && (
-                            <a
-                              href={demoLink.url}
-                              target="_blank"
-                              rel="noreferrer"
-                              className="inline-flex items-center text-xs font-semibold text-blue-600 underline decoration-blue-300 underline-offset-2 hover:text-blue-700"
-                              title={getProjectLinkText(demoLink)}
-                            >
-                              <span className="max-w-[12rem] truncate">{getProjectLinkText(demoLink)}</span>{' '}
-                              <span className="ml-1" aria-hidden>↗</span>
-                            </a>
-                          )}
-                          {repoLink && (
-                            <a
-                              href={repoLink.url}
-                              target="_blank"
-                              rel="noreferrer"
-                              className="inline-flex items-center rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-900 hover:bg-slate-50"
-                              title={getProjectLinkText(repoLink)}
-                            >
-                              <span className="max-w-[12rem] truncate">{getProjectLinkText(repoLink)}</span>{' '}
-                              <span className="ml-1" aria-hidden>↗</span>
-                            </a>
-                          )}
-                          {caseStudyLink && (
-                            <a
-                              href={caseStudyLink.url}
-                              target="_blank"
-                              rel="noreferrer"
-                              className="inline-flex items-center rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-900 hover:bg-slate-50"
-                              title={getProjectLinkText(caseStudyLink)}
-                            >
-                              <span className="max-w-[12rem] truncate">{getProjectLinkText(caseStudyLink)}</span>{' '}
-                              <span className="ml-1" aria-hidden>↗</span>
-                            </a>
-                          )}
-                        </div>
+                        <ul className="mt-2 space-y-2">
+                          {sidebarLinks.map((item) => (
+                            <li key={item.key}>
+                              <a
+                                href={item.href}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="group flex min-w-0 items-start justify-between gap-2 rounded-lg border border-slate-200 bg-white px-2.5 py-2 text-xs text-slate-700 transition hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900"
+                                title={item.title}
+                              >
+                                <span className="flex min-w-0 flex-1 items-start gap-2">
+                                  <SidebarLinkIcon type={item.type} className="h-4 w-4 shrink-0 text-slate-500" />
+                                  <span
+                                    className={`min-w-0 max-w-full ${
+                                      item.useMonoText ? 'font-mono text-[11px] leading-4 break-all' : 'truncate font-medium'
+                                    }`}
+                                  >
+                                    {item.text}
+                                  </span>
+                                </span>
+                                <ExternalLinkIcon className="h-3.5 w-3.5 shrink-0 text-slate-400 transition group-hover:text-slate-700" />
+                              </a>
+                            </li>
+                          ))}
+                        </ul>
                       </div>
                     )}
 
@@ -732,16 +799,6 @@ export default function ProjectPage() {
                       </div>
                     )}
 
-                    <div>
-                      <a
-                        href={resumeUrl}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="inline-flex items-center rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-900 hover:bg-slate-50"
-                      >
-                        Download resume <span className="ml-1" aria-hidden>↗</span>
-                      </a>
-                    </div>
                   </div>
                 </div>
               </aside>

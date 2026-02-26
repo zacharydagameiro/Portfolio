@@ -82,7 +82,10 @@
       "LLM",
       "GCP"
     ],
-    "repoUrl": null,
+    "repoUrl": {
+      "label": "GitHub Repo",
+      "url": "https://github.com/zacharydagameiro/receipt-ocr"
+    },
     "demoUrl": {
       "label": "Preview (Google Cloud Run)",
       "url": "https://receipt-ocr-demo-944565818393.us-central1.run.app/"
