@@ -1,16 +1,74 @@
-import { useState } from 'react'
-import { Link, NavLink } from 'react-router-dom'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { Link, NavLink, useLocation } from 'react-router-dom'
 import aboutData from '../data/about.json'
 import Footer from './Footer'
 import { resolveAssetUrl } from '../utils/assetUrl'
 
 export default function Layout({ children }) {
-  const resumeUrl = resolveAssetUrl('/resume.pdf')
+  const location = useLocation()
+  const [mobileNavMounted, setMobileNavMounted] = useState(false)
   const [mobileNavOpen, setMobileNavOpen] = useState(false)
-  const navClass = ({ isActive }) =>
+  const desktopNavRef = useRef(null)
+  const desktopLinkRefs = useRef([])
+  const [desktopIndicatorStyle, setDesktopIndicatorStyle] = useState(null)
+  const desktopNavItems = [
+    { label: 'Home', to: '/' },
+    { label: 'About', to: '/about' },
+    { label: 'Projects', to: '/projects' },
+    { label: 'Resumes', to: '/resumes' },
+  ]
+  const activeDesktopIndex = desktopNavItems.findIndex((item) => {
+    if (item.to === '/') return location.pathname === '/'
+    return location.pathname.startsWith(item.to)
+  })
+  const desktopNavClass = ({ isActive }) =>
+    [
+      'relative z-10 inline-flex items-center justify-center rounded-full px-4 py-2 text-sm font-medium transition-all duration-200 ease-out',
+      'active:scale-95',
+      isActive
+        ? 'text-white hover:text-white hover:scale-[1.03]'
+        : 'text-slate-600 hover:-translate-y-0.5 hover:bg-white/70 hover:text-slate-900',
+    ].join(' ')
+  const mobileNavClass = ({ isActive }) =>
     `transition ${isActive ? 'text-slate-900 font-medium' : 'text-slate-600 hover:text-slate-900'}`
   const { name, profileImageUrl } = aboutData
   const resolvedProfileImageUrl = resolveAssetUrl(profileImageUrl)
+
+  const updateDesktopIndicator = () => {
+    if (activeDesktopIndex < 0) return
+    const nav = desktopNavRef.current
+    const activeLink = desktopLinkRefs.current[activeDesktopIndex]
+    if (!nav || !activeLink) return
+    const navRect = nav.getBoundingClientRect()
+    const linkRect = activeLink.getBoundingClientRect()
+    setDesktopIndicatorStyle({
+      left: linkRect.left - navRect.left,
+      width: linkRect.width,
+    })
+  }
+
+  const openMobileNav = () => {
+    setMobileNavMounted(true)
+    requestAnimationFrame(() => setMobileNavOpen(true))
+  }
+
+  const closeMobileNav = () => setMobileNavOpen(false)
+
+  useEffect(() => {
+    if (!mobileNavMounted || mobileNavOpen) return
+    const timeoutId = window.setTimeout(() => setMobileNavMounted(false), 220)
+    return () => window.clearTimeout(timeoutId)
+  }, [mobileNavMounted, mobileNavOpen])
+
+  useLayoutEffect(() => {
+    updateDesktopIndicator()
+  }, [activeDesktopIndex, location.pathname])
+
+  useEffect(() => {
+    const handleResize = () => updateDesktopIndicator()
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [activeDesktopIndex, location.pathname])
 
   return (
     <div className="flex min-h-screen flex-col bg-slate-50 text-slate-900">
@@ -24,45 +82,47 @@ export default function Layout({ children }) {
               <img
                 src={resolvedProfileImageUrl}
                 alt=""
-                className="h-8 w-8 rounded-full border border-slate-200 object-cover"
+                className="h-9 w-9 rounded-full border border-slate-200 object-cover"
               />
             )}
             <span>{name || 'Zachary Gameiro'}</span>
           </Link>
 
-          <div className="hidden items-center gap-6 md:flex">
-            <NavLink to="/" end className={navClass}>
-              Home
-            </NavLink>
-            <span className="text-slate-300" aria-hidden>
-              |
-            </span>
-            <NavLink to="/about" className={navClass}>
-              About
-            </NavLink>
-            <span className="text-slate-300" aria-hidden>
-              |
-            </span>
-            <NavLink to="/projects" className={navClass}>
-              Projects
-            </NavLink>
-            <span className="text-slate-300" aria-hidden>
-              |
-            </span>
-            <a
-              href={resumeUrl}
-              target="_blank"
-              rel="noreferrer"
-              className="text-slate-600 transition hover:text-slate-900"
-            >
-              Resume
-            </a>
+          <div
+            ref={desktopNavRef}
+            className="relative hidden items-center rounded-full border border-slate-200 bg-slate-100/85 p-1 shadow-sm md:flex"
+          >
+            <span
+              aria-hidden
+              className="pointer-events-none absolute inset-y-1 left-0 rounded-full bg-slate-900 shadow-sm transition-all duration-300 ease-out"
+              style={
+                desktopIndicatorStyle
+                  ? {
+                      width: `${desktopIndicatorStyle.width}px`,
+                      transform: `translateX(${desktopIndicatorStyle.left}px)`,
+                    }
+                  : { opacity: 0 }
+              }
+            />
+            {desktopNavItems.map((item, index) => (
+              <NavLink
+                key={item.to}
+                ref={(node) => {
+                  desktopLinkRefs.current[index] = node
+                }}
+                to={item.to}
+                end={item.to === '/'}
+                className={desktopNavClass}
+              >
+                {item.label}
+              </NavLink>
+            ))}
           </div>
 
           <button
             type="button"
-            className="inline-flex items-center justify-center rounded-md border border-slate-200 bg-white px-2.5 py-1.5 text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-50 md:hidden"
-            onClick={() => setMobileNavOpen(true)}
+            className="inline-flex items-center justify-center rounded-md border border-slate-200 bg-white px-2.5 py-1.5 text-sm font-medium text-slate-700 shadow-sm transition-transform duration-150 hover:bg-slate-50 active:scale-95 md:hidden"
+            onClick={openMobileNav}
             aria-label="Open navigation menu"
           >
             <span className="sr-only">Open navigation menu</span>
@@ -80,21 +140,27 @@ export default function Layout({ children }) {
         </nav>
       </header>
 
-      {mobileNavOpen && (
+      {mobileNavMounted && (
         <div className="fixed inset-0 z-30 md:hidden" role="dialog" aria-modal="true">
           <button
             type="button"
-            className="absolute inset-0 bg-slate-900/40 backdrop-blur-[1px]"
-            onClick={() => setMobileNavOpen(false)}
+            className={`absolute inset-0 bg-slate-900/40 backdrop-blur-[1px] transition-opacity duration-200 ${
+              mobileNavOpen ? 'opacity-100' : 'opacity-0'
+            }`}
+            onClick={closeMobileNav}
             aria-label="Close navigation menu"
           />
-          <div className="absolute right-0 top-0 h-full w-64 max-w-[80%] bg-white shadow-xl">
+          <div
+            className={`absolute right-0 top-0 flex h-full w-64 max-w-[80%] flex-col bg-white shadow-xl transition-transform duration-200 ease-out ${
+              mobileNavOpen ? 'translate-x-0' : 'translate-x-full'
+            }`}
+          >
             <div className="flex items-center justify-between border-b border-slate-200 px-4 py-3">
               <span className="text-sm font-semibold text-slate-800">Menu</span>
               <button
                 type="button"
-                className="inline-flex items-center justify-center rounded-md border border-slate-200 bg-white p-1.5 text-slate-700 hover:bg-slate-50"
-                onClick={() => setMobileNavOpen(false)}
+                className="inline-flex items-center justify-center rounded-md border border-slate-200 bg-white p-1.5 text-slate-700 transition-transform duration-150 hover:bg-slate-50 hover:rotate-90 active:scale-90"
+                onClick={closeMobileNav}
                 aria-label="Close navigation menu"
               >
                 <svg
@@ -109,38 +175,38 @@ export default function Layout({ children }) {
                 </svg>
               </button>
             </div>
-            <div className="flex flex-col gap-3 px-4 py-4 text-sm">
+            <div className="flex min-h-0 flex-1 flex-col gap-3 px-4 py-4 text-sm">
               <NavLink
                 to="/"
                 end
-                className={navClass}
-                onClick={() => setMobileNavOpen(false)}
+                className={mobileNavClass}
+                onClick={closeMobileNav}
               >
                 Home
               </NavLink>
               <NavLink
                 to="/about"
-                className={navClass}
-                onClick={() => setMobileNavOpen(false)}
+                className={mobileNavClass}
+                onClick={closeMobileNav}
               >
                 About
               </NavLink>
               <NavLink
                 to="/projects"
-                className={navClass}
-                onClick={() => setMobileNavOpen(false)}
+                className={mobileNavClass}
+                onClick={closeMobileNav}
               >
                 Projects
               </NavLink>
-              <a
-                href={resumeUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="text-slate-600 transition hover:text-slate-900"
-                onClick={() => setMobileNavOpen(false)}
-              >
-                Resume
-              </a>
+              <div className="mt-auto border-t border-slate-200 pt-4">
+                <Link
+                  to="/resumes"
+                  className="inline-flex w-full items-center justify-center rounded-lg border border-slate-900 bg-slate-900 px-3 py-2 text-sm font-medium text-white transition-transform duration-150 hover:bg-slate-800 active:scale-[0.98]"
+                  onClick={closeMobileNav}
+                >
+                  Resumes
+                </Link>
+              </div>
             </div>
           </div>
         </div>

@@ -1,0 +1,14 @@
+[
+  {
+    "name": "general",
+    "title": "General Software Resume",
+    "label": "General",
+    "uri": "/resumes/resume.pdf"
+  },
+  {
+    "name": "ml-ai",
+    "title": "ML / AI Resume",
+    "label": "ML / AI",
+    "uri": "/resumes/resume-ml-ai.pdf"
+  }
+]

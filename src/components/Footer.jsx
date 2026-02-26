@@ -1,11 +1,9 @@
 import { Link } from 'react-router-dom'
 import aboutData from '../data/about.json'
-import { resolveAssetUrl } from '../utils/assetUrl'
 
 const defaultName = 'Zachary Gameiro'
 
 export default function Footer() {
-  const resumeUrl = resolveAssetUrl('/resume.pdf')
   const year = new Date().getFullYear()
   const { name = defaultName, tagline, contact = {}, links = {} } = aboutData
 
@@ -52,9 +50,9 @@ export default function Footer() {
                 </li>
               ))}
               <li>
-                <a href={resumeUrl} target="_blank" rel="noreferrer" className="text-slate-700 transition hover:text-slate-900">
-                  Resume
-                </a>
+                <Link to="/resumes" className="text-slate-700 transition hover:text-slate-900">
+                  Resumes
+                </Link>
               </li>
             </ul>
           </div>

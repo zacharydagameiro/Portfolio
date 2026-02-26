@@ -2,6 +2,27 @@ import { Link } from 'react-router-dom'
 import { toProjectLink, getProjectLinkText } from '../utils/projectLinks'
 import { resolveAssetUrl } from '../utils/assetUrl'
 
+const CATEGORY_LABELS = {
+  'ml-ai': 'ML / AI',
+  school: 'School',
+  bio: 'Bio',
+  mini: 'Mini',
+  freelance: 'Freelance'
+}
+
+const getCategoryIconColorClass = (category) =>
+  category === 'ml-ai'
+    ? 'text-violet-500'
+    : category === 'mini'
+      ? 'text-pink-500'
+    : category === 'bio'
+      ? 'text-emerald-500'
+    : category === 'school'
+      ? 'text-amber-500'
+      : category === 'freelance'
+        ? 'text-sky-500'
+        : 'text-slate-300'
+
 export function ProjectIcon({ category, className = 'h-4 w-4' }) {
   // Default: folder (general project)
   if (!category) {
@@ -99,29 +120,46 @@ export function ProjectIcon({ category, className = 'h-4 w-4' }) {
 }
 
 export default function ProjectCard({ project, listSearch = '' }) {
-  const { slug, title, caption, shortDescription, description, year, tags, repoUrl, demoUrl, category, coverImageUrl } = project
+  const { slug, title, caption, shortDescription, description, year, tags, repoUrl, demoUrl, category, categories, coverImageUrl, featured } = project
   const cardBlurb = shortDescription || description
   const resolvedCoverImageUrl = resolveAssetUrl(coverImageUrl)
   const hasCoverImage = Boolean(resolvedCoverImageUrl)
   const demoLink = toProjectLink(demoUrl)
   const repoLink = toProjectLink(repoUrl)
-  const iconColorClass =
-    category === 'ml-ai'
-      ? 'text-violet-500'
-      : category === 'mini'
-        ? 'text-pink-500'
-      : category === 'bio'
-        ? 'text-emerald-500'
-      : category === 'school'
-        ? 'text-amber-500'
-        : category === 'freelance'
-          ? 'text-sky-500'
-          : 'text-slate-300'
+  const categoryIcons = (() => {
+    const input = []
+    if (Array.isArray(categories)) input.push(...categories)
+    if (category) input.push(category)
+
+    const normalized = input
+      .map((item) => (typeof item === 'string' ? item.trim() : ''))
+      .filter(Boolean)
+
+    const unique = []
+    normalized.forEach((item) => {
+      if (!unique.includes(item)) unique.push(item)
+    })
+
+    return unique.length > 0 ? unique : [null]
+  })()
+
   return (
     <Link
       to={`/projects/${slug}${listSearch}`}
-      className="flex h-full flex-col rounded-xl border border-slate-200 bg-slate-50 p-5 shadow-sm transition hover:border-slate-300 hover:shadow-md hover:-translate-y-0.5"
+      className="relative flex h-full flex-col rounded-xl border border-slate-200 bg-slate-50 p-5 shadow-sm transition hover:border-slate-300 hover:shadow-md hover:-translate-y-0.5"
     >
+      {featured && (
+        <span
+          className="absolute right-3 top-3 z-20 inline-flex h-7 w-7 items-center justify-center rounded-full border border-amber-200 bg-amber-100/95 text-amber-700 shadow-sm"
+          title="Featured project"
+          aria-label="Featured project"
+        >
+          <svg className="h-3.5 w-3.5" fill="currentColor" viewBox="0 0 20 20" aria-hidden>
+            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.1 3.385a1 1 0 0 0 .95.69h3.56c.969 0 1.371 1.24.588 1.81l-2.88 2.093a1 1 0 0 0-.364 1.118l1.1 3.386c.3.921-.755 1.688-1.539 1.118l-2.88-2.093a1 1 0 0 0-1.175 0l-2.88 2.093c-.784.57-1.838-.197-1.539-1.118l1.1-3.386a1 1 0 0 0-.364-1.118L2.85 8.812c-.783-.57-.38-1.81.588-1.81h3.56a1 1 0 0 0 .95-.69l1.1-3.385Z" />
+          </svg>
+        </span>
+      )}
+
       {hasCoverImage && (
         <div className="mb-3 overflow-hidden rounded-lg border border-slate-200 bg-slate-100">
           <img
@@ -139,7 +177,18 @@ export default function ProjectCard({ project, listSearch = '' }) {
           <h3 className="text-base font-semibold text-slate-900 sm:text-lg">{title}</h3>
           {caption && <p className="mt-0.5 text-sm text-slate-500">{caption}</p>}
         </div>
-        <ProjectIcon category={category} className={`h-4 w-4 shrink-0 ${iconColorClass}`} />
+        <div className="flex shrink-0 items-center gap-1.5">
+          {categoryIcons.map((cat, index) => (
+            <span
+              key={`${cat || 'default'}-${index}`}
+              className={`inline-flex h-6 w-6 items-center justify-center rounded-md bg-slate-100 ${getCategoryIconColorClass(cat)}`}
+              title={cat ? CATEGORY_LABELS[cat] || cat : 'General project'}
+              aria-label={cat ? CATEGORY_LABELS[cat] || cat : 'General project'}
+            >
+              <ProjectIcon category={cat} className="h-4 w-4" />
+            </span>
+          ))}
+        </div>
       </div>
       <div className="mt-1 min-h-0 flex-1">
         {cardBlurb ? <p className="text-sm text-slate-600 leading-relaxed line-clamp-2">{cardBlurb}</p> : <span className="block" aria-hidden />}

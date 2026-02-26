@@ -4,11 +4,51 @@ import aboutData from '../data/about.json'
 import Modal from '../components/Modal.jsx'
 import { ABOUT_LAST_UPDATED } from '../data/siteMeta'
 import { resolveAssetUrl } from '../utils/assetUrl'
+import { getResumes } from '../utils/resumes'
 
 const education = aboutData.education || []
 const experience = aboutData.experience || []
 const bio = aboutData.bio ?? aboutData.about
 const bioParagraphs = Array.isArray(bio) ? bio : bio ? [bio] : []
+
+const ExternalLinkIcon = ({ className = 'h-3.5 w-3.5' }) => (
+  <svg className={className} fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor" aria-hidden>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5h6m0 0v6m0-6L10.5 13.5" />
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M10.5 6H8.25A3.75 3.75 0 0 0 4.5 9.75v6A3.75 3.75 0 0 0 8.25 19.5h6A3.75 3.75 0 0 0 18 15.75V13.5"
+    />
+  </svg>
+)
+
+const SidebarLinkIcon = ({ type, className = 'h-4 w-4' }) => {
+  if (type === 'github') {
+    return (
+      <svg className={className} viewBox="0 0 16 16" fill="currentColor" aria-hidden>
+        <path d="M8 0C3.58 0 0 3.58 0 8a8.002 8.002 0 0 0 5.47 7.59c.4.08.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.95-.82-1.15-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.5-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82A7.56 7.56 0 0 1 8 3.8c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.002 8.002 0 0 0 16 8c0-4.42-3.58-8-8-8Z" />
+      </svg>
+    )
+  }
+
+  if (type === 'linkedin') {
+    return (
+      <svg className={className} viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+        <path d="M4.98 3.5A2.5 2.5 0 1 0 5 8.5 2.5 2.5 0 0 0 4.98 3.5ZM3 9h4v12H3V9Zm7 0h3.83v1.71h.05c.53-1 1.84-2.06 3.79-2.06 4.06 0 4.81 2.67 4.81 6.14V21h-4v-5.53c0-1.32-.02-3.02-1.84-3.02-1.84 0-2.12 1.44-2.12 2.92V21h-4V9Z" />
+      </svg>
+    )
+  }
+
+  return (
+    <svg className={className} fill="none" viewBox="0 0 24 24" strokeWidth={1.7} stroke="currentColor" aria-hidden>
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M3.75 12A8.25 8.25 0 0 1 12 3.75m0 0A8.25 8.25 0 0 1 20.25 12M12 3.75c2.2 2.12 3.5 5.02 3.5 8.25S14.2 18.13 12 20.25m0-16.5c-2.2 2.12-3.5 5.02-3.5 8.25S9.8 18.13 12 20.25m-7.85-5.25h15.7"
+      />
+    </svg>
+  )
+}
 
 export default function About() {
   useEffect(() => {
@@ -46,21 +86,7 @@ export default function About() {
   }, [])
 
   const resumes = useMemo(() => {
-    const list = Array.isArray(aboutData.resumes) ? aboutData.resumes : []
-
-    const normalized = list
-      .map((item) => {
-        if (typeof item === 'string') return { label: item, href: item }
-        return item
-      })
-      .filter((item) => item?.label && item?.href)
-      .map((item) => ({ ...item, href: resolveAssetUrl(item.href) }))
-
-    if (!normalized.length && aboutData.resumeUrl) {
-      normalized.push({ label: 'Resume', href: resolveAssetUrl(aboutData.resumeUrl) })
-    }
-
-    return normalized
+    return getResumes()
   }, [])
 
   const quickFacts = useMemo(() => {
@@ -102,6 +128,21 @@ export default function About() {
     if (!links.linkedin && contact.linkedin) out.push({ label: 'LinkedIn', href: contact.linkedin })
     return out
   }, [])
+
+  const sidebarSocialLinks = useMemo(
+    () =>
+      socialLinks.map((link) => {
+        const lowerLabel = (link.label || '').toLowerCase()
+        const type = lowerLabel === 'github' ? 'github' : lowerLabel === 'linkedin' ? 'linkedin' : 'website'
+        return {
+          ...link,
+          type,
+          text: link.href,
+          useMonoText: type === 'github' || type === 'linkedin'
+        }
+      }),
+    [socialLinks]
+  )
 
   const sidebarTagline = useMemo(() => {
     if (!aboutData.tagline) return { primary: '', degree: '' }
@@ -324,31 +365,34 @@ export default function About() {
               </div>
             </div>
 
-            {socialLinks.length > 0 && (
+            {sidebarSocialLinks.length > 0 && (
               <div className="mt-4 border-t border-slate-100 pt-4">
                 <h3 className="text-xs font-semibold uppercase tracking-wide text-slate-500">Links</h3>
-                <div className="mt-2 flex flex-wrap gap-2">
-                  {socialLinks.map((l) => (
-                    <a
-                      key={l.label}
-                      href={l.href}
-                      target="_blank"
-                      rel="noreferrer"
-                      className={`inline-flex items-center rounded-full px-3 py-1.5 text-xs font-semibold shadow-sm transition ${
-                        l.label === 'GitHub'
-                          ? 'bg-slate-900 text-white hover:bg-slate-800'
-                          : l.label === 'LinkedIn'
-                            ? 'bg-sky-600 text-white hover:bg-sky-500'
-                            : 'border border-slate-200 bg-white text-slate-900 hover:bg-slate-50'
-                      }`}
-                    >
-                      {l.label}
-                      <span className="ml-1" aria-hidden>
-                        ↗
-                      </span>
-                    </a>
+                <ul className="mt-2 space-y-2">
+                  {sidebarSocialLinks.map((link) => (
+                    <li key={`${link.label}-${link.href}`}>
+                      <a
+                        href={link.href}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="group flex min-w-0 items-start justify-between gap-2 rounded-lg border border-slate-200 bg-white px-2.5 py-2 text-xs text-slate-700 transition hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900"
+                        title={link.href}
+                      >
+                        <span className="flex min-w-0 flex-1 items-start gap-2">
+                          <SidebarLinkIcon type={link.type} className="h-4 w-4 shrink-0 text-slate-500" />
+                          <span
+                            className={`min-w-0 max-w-full ${
+                              link.useMonoText ? 'font-mono text-[11px] leading-4 break-all' : 'truncate font-medium'
+                            }`}
+                          >
+                            {link.text}
+                          </span>
+                        </span>
+                        <ExternalLinkIcon className="h-3.5 w-3.5 shrink-0 text-slate-400 transition group-hover:text-slate-700" />
+                      </a>
+                    </li>
                   ))}
-                </div>
+                </ul>
               </div>
             )}
 
@@ -387,17 +431,17 @@ export default function About() {
 
               <ul className="mt-4 space-y-3">
                 {resumes.map((resume) => (
-                  <li key={resume.label}>
+                  <li key={resume.name}>
                     <a
                       href={resume.href}
                       target="_blank"
                       rel="noreferrer"
-                      className="flex items-center justify-between rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-900 transition hover:border-slate-300 hover:bg-slate-50"
+                      className="flex items-center justify-between rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm text-slate-900 transition hover:border-slate-300 hover:bg-slate-50"
                     >
-                      <span className="flex items-center gap-2">
-                        <span>{resume.label}</span>
+                      <span className="flex items-center gap-2 min-w-0">
+                        <span className="truncate font-medium">{resume.title}</span>
                         <span className="rounded bg-slate-100 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-slate-600">
-                          PDF
+                          {resume.label}
                         </span>
                       </span>
                       <span className="ml-2 text-slate-400" aria-hidden>

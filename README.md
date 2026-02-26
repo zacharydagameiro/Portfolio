@@ -28,7 +28,9 @@ npm run preview
 - Main content lives in:
   - `src/data/about.json`
   - `src/data/projects.json`
-- Public assets (images, videos, resumes) live in `public/`.
+  - `src/data/resumes.json`
+- Public assets (images, videos, PDFs) live in `public/`.
+- Resume PDFs live in `public/resumes/`.
 - Use root-relative asset paths in JSON (example: `/media/demo.mp4`).
 
 ## Deploy (GitHub Pages via Actions)

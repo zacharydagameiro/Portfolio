@@ -5,8 +5,7 @@
   "profileImageUrl": "/profile.jpg",
   "contact": {
     "email": "zachary_gameiro@sfu.ca",
-    "phone": "(780) 340-9772",
-    "github": "https://github.com/zacharygameiro",
+    "github": "https://github.com/zacharydagameiro",
     "linkedin": "https://www.linkedin.com/in/zachary-gameiro/"
   },
   "locations": [
@@ -18,11 +17,6 @@
     { "label": "French", "tooltip": "I did French immersion, and my mother is a French teacher" },
     { "label": "Portuguese", "tooltip": "My family is Portuguese; it was my first baby language" },
     { "label": "Spanish", "tooltip": "Very similar to Portuguese—I'm conversationally comfortable. Done lots of traveling." }
-  ],
-  "resumeUrl": "/resume.pdf",
-  "resumes": [
-    { "label": "General", "href": "/resume.pdf" },
-    { "label": "ML / AI", "href": "/resume-ml-ai.pdf" }
   ],
   "education": [
     {

@@ -1,5 +1,7 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { resolveAssetUrl } from '../utils/assetUrl'
+import { getResumes } from '../utils/resumes'
 
 function LocationIcon({ type, className = "h-4 w-4 text-slate-500" }) {
   if (type === "home") {
@@ -151,10 +153,10 @@ function SkillsSection({ skills }) {
 }
 
 export default function HomeSidebar({ about }) {
-  const { name, profileImageUrl, contact, locations, location, languages, resumeUrl, skills } = about || {}
+  const { name, profileImageUrl, contact, locations, location, languages, skills } = about || {}
   const resolvedProfileImageUrl = resolveAssetUrl(profileImageUrl)
-  const resolvedResumeUrl = resolveAssetUrl(resumeUrl)
   const locationList = Array.isArray(locations) ? locations : (location ? [{ label: location }] : [])
+  const hasResumes = getResumes().length > 0
 
   return (
     <aside className="space-y-6 overflow-visible rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
@@ -267,21 +269,19 @@ export default function HomeSidebar({ about }) {
           </p>
         </section>
       )}
-      {resolvedResumeUrl && (
+      {hasResumes && (
         <section className="border-t border-slate-100 pt-6">
           <h3 className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-slate-500">
             <SectionIconSmall type="resume" />
-            Resume
+            Resumes
           </h3>
-          <a
-            href={resolvedResumeUrl}
-            target="_blank"
-            rel="noreferrer"
+          <Link
+            to="/resumes"
             className="mt-2 inline-flex items-center gap-2 rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800 transition"
           >
             <SectionIconSmall type="resume" className="h-4 w-4 text-white shrink-0" />
-            Download resume
-          </a>
+            View resumes
+          </Link>
         </section>
       )}
       {skills && Object.keys(skills).length > 0 && (

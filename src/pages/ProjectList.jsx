@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import projectsData from '../data/projects.json'
 import ProjectCard from '../components/ProjectCard'
 import { useSearchParams } from 'react-router-dom'
@@ -6,12 +6,12 @@ import { PROJECTS_LAST_UPDATED } from '../data/siteMeta'
 
 const BASE_TABS = [
   { id: 'featured', label: 'Featured' },
-  { id: 'all', label: 'All' },
-  { id: 'mini', label: 'Mini' },
   { id: 'ml-ai', label: 'ML / AI' },
-  { id: 'bio', label: 'Bio' },
   { id: 'school', label: 'School' },
+  { id: 'bio', label: 'Bio' },
+  { id: 'mini', label: 'Mini' },
   { id: 'freelance', label: 'Freelance' },
+  { id: 'all', label: 'All' },
 ]
 
 const SORT_OPTIONS = [
@@ -23,8 +23,23 @@ const SORT_OPTIONS = [
 const projectInCategory = (project, categoryId) =>
   project.category === categoryId || (Array.isArray(project.categories) && project.categories.includes(categoryId))
 
+const TAB_ACTIVE_BG_CLASS = {
+  featured: 'bg-slate-900',
+  mini: 'bg-pink-600',
+  'ml-ai': 'bg-violet-600',
+  bio: 'bg-emerald-600',
+  school: 'bg-amber-500',
+  freelance: 'bg-sky-600',
+  all: 'bg-slate-900',
+}
+
 export default function ProjectList() {
   const [searchParams, setSearchParams] = useSearchParams()
+  const tabScrollRef = useRef(null)
+  const tabListRef = useRef(null)
+  const tabButtonRefs = useRef({})
+  const [tabOverflowState, setTabOverflowState] = useState({ showLeft: false, showRight: false })
+  const [activePillStyle, setActivePillStyle] = useState({ left: 0, width: 0, ready: false })
   const tabParam = searchParams.get('tab')
   const sortParam = searchParams.get('sort')
   const validTabIds = BASE_TABS.map((tab) => tab.id)
@@ -96,6 +111,59 @@ export default function ProjectList() {
     document.title = 'Projects | Zachary Gameiro'
   }, [])
 
+  const setTabButtonRef = useCallback((tabId, node) => {
+    if (node) {
+      tabButtonRefs.current[tabId] = node
+      return
+    }
+    delete tabButtonRefs.current[tabId]
+  }, [])
+
+  const updateActivePill = useCallback(() => {
+    const activeButton = tabButtonRefs.current[activeTab]
+    const tabListEl = tabListRef.current
+    if (!activeButton || !tabListEl) return
+
+    setActivePillStyle({
+      left: activeButton.offsetLeft,
+      width: activeButton.offsetWidth,
+      ready: true
+    })
+  }, [activeTab])
+
+  const updateTabOverflowIndicators = useCallback(() => {
+    const el = tabScrollRef.current
+    if (!el) return
+
+    const maxScrollLeft = Math.max(el.scrollWidth - el.clientWidth, 0)
+    const hasOverflow = maxScrollLeft > 1
+    setTabOverflowState({
+      showLeft: hasOverflow && el.scrollLeft > 2,
+      showRight: hasOverflow && el.scrollLeft < maxScrollLeft - 2
+    })
+  }, [])
+
+  useEffect(() => {
+    updateTabOverflowIndicators()
+    const el = tabScrollRef.current
+    if (!el) return
+
+    const handleScrollOrResize = () => updateTabOverflowIndicators()
+    el.addEventListener('scroll', handleScrollOrResize, { passive: true })
+    window.addEventListener('resize', handleScrollOrResize)
+
+    return () => {
+      el.removeEventListener('scroll', handleScrollOrResize)
+      window.removeEventListener('resize', handleScrollOrResize)
+    }
+  }, [tabs.length, updateTabOverflowIndicators])
+
+  useEffect(() => {
+    updateActivePill()
+    window.addEventListener('resize', updateActivePill)
+    return () => window.removeEventListener('resize', updateActivePill)
+  }, [tabs, activeTab, updateActivePill])
+
   const handleTabChange = (tabId) => {
     const nextParams = new URLSearchParams(searchParams)
     if (tabId === 'featured') {
@@ -126,42 +194,79 @@ export default function ProjectList() {
         Last updated: {PROJECTS_LAST_UPDATED}
       </p>
 
-      <div className="mt-6 flex flex-wrap items-center gap-4 justify-between">
-        <div
-          className="inline-flex flex-wrap gap-1 rounded-lg border border-slate-200 bg-white p-1 shadow-sm"
-          role="tablist"
-          aria-label="Filter projects"
-        >
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              role="tab"
-              aria-selected={activeTab === tab.id}
-              aria-controls="projects-grid"
-              id={`tab-${tab.id}`}
-              onClick={() => handleTabChange(tab.id)}
-              className={`rounded-md px-3 py-1.5 text-xs font-medium transition ${
-                activeTab === tab.id
-                  ? tab.id === 'featured'
-                    ? 'bg-slate-900 text-white shadow-sm'
-                    : tab.id === 'mini'
-                    ? 'bg-pink-600 text-white shadow-sm'
-                    : tab.id === 'ml-ai'
-                    ? 'bg-violet-600 text-white shadow-sm'
-                    : tab.id === 'bio'
-                      ? 'bg-emerald-600 text-white shadow-sm'
-                    : tab.id === 'school'
-                      ? 'bg-amber-500 text-white shadow-sm'
-                      : tab.id === 'freelance'
-                        ? 'bg-sky-600 text-white shadow-sm'
-                        : 'bg-slate-900 text-white shadow-sm'
-                  : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
-              }`}
+      <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
+        <div className="w-full sm:w-auto">
+          <div className="relative w-full overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm sm:w-auto">
+            <div
+              ref={tabScrollRef}
+              className="overflow-x-auto p-1 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden sm:overflow-visible"
             >
-              {tab.label}
-            </button>
-          ))}
+              <div
+                ref={tabListRef}
+                className="relative inline-flex min-w-max gap-1"
+                role="tablist"
+                aria-label="Filter projects"
+              >
+                <div
+                  className={`pointer-events-none absolute top-0 z-0 h-full rounded-md shadow-sm transition-[transform,width,background-color,opacity] duration-300 ease-out ${TAB_ACTIVE_BG_CLASS[activeTab] || 'bg-slate-900'} ${
+                    activePillStyle.ready ? 'opacity-100' : 'opacity-0'
+                  }`}
+                  style={{
+                    width: `${activePillStyle.width}px`,
+                    transform: `translateX(${activePillStyle.left}px)`
+                  }}
+                  aria-hidden
+                />
+                {tabs.map((tab) => (
+                  <button
+                    key={tab.id}
+                    ref={(node) => setTabButtonRef(tab.id, node)}
+                    type="button"
+                    role="tab"
+                    aria-selected={activeTab === tab.id}
+                    aria-controls="projects-grid"
+                    id={`tab-${tab.id}`}
+                    onClick={() => handleTabChange(tab.id)}
+                    className={`relative z-10 shrink-0 rounded-md px-3 py-1.5 text-xs font-medium will-change-transform transition-[transform,color,background-color] duration-150 [transition-timing-function:cubic-bezier(0.22,1.4,0.36,1)] active:scale-[0.96] motion-reduce:transition-none motion-reduce:active:scale-100 ${
+                      activeTab === tab.id
+                        ? 'text-white'
+                        : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+                    }`}
+                  >
+                    {tab.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div
+              className={`pointer-events-none absolute inset-y-0 left-0 z-20 w-10 bg-gradient-to-r from-white/95 via-white/70 to-transparent backdrop-blur-[1px] transition-opacity duration-200 sm:hidden ${
+                tabOverflowState.showLeft ? 'opacity-100' : 'opacity-0'
+              }`}
+              aria-hidden
+            />
+            <div
+              className={`pointer-events-none absolute inset-y-0 right-0 z-20 w-10 bg-gradient-to-l from-white/95 via-white/70 to-transparent backdrop-blur-[1px] transition-opacity duration-200 sm:hidden ${
+                tabOverflowState.showRight ? 'opacity-100' : 'opacity-0'
+              }`}
+              aria-hidden
+            />
+            <div
+              className={`pointer-events-none absolute left-1.5 top-1/2 z-30 -translate-y-1/2 rounded-full border border-white/70 bg-white/70 px-1.5 py-0.5 text-[10px] font-semibold text-slate-600 shadow-sm backdrop-blur-sm transition-opacity duration-200 sm:hidden ${
+                tabOverflowState.showLeft ? 'opacity-100' : 'opacity-0'
+              }`}
+              aria-hidden
+            >
+              ←
+            </div>
+            <div
+              className={`pointer-events-none absolute right-1.5 top-1/2 z-30 -translate-y-1/2 rounded-full border border-white/70 bg-white/70 px-1.5 py-0.5 text-[10px] font-semibold text-slate-600 shadow-sm backdrop-blur-sm transition-opacity duration-200 sm:hidden ${
+                tabOverflowState.showRight ? 'opacity-100' : 'opacity-0'
+              }`}
+              aria-hidden
+            >
+              →
+            </div>
+          </div>
         </div>
 
         <div className="flex items-center gap-2">
