@@ -1,13 +1,17 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
-import { Link, NavLink, useLocation } from 'react-router-dom'
+import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
 import aboutData from '../data/about.json'
 import Footer from './Footer'
 import { resolveAssetUrl } from '../utils/assetUrl'
 
+const LAST_PROJECTS_ROUTE_KEY = 'portfolio:last-projects-route'
+
 export default function Layout({ children }) {
   const location = useLocation()
+  const navigate = useNavigate()
   const [mobileNavMounted, setMobileNavMounted] = useState(false)
   const [mobileNavOpen, setMobileNavOpen] = useState(false)
+  const [projectsNavTarget, setProjectsNavTarget] = useState('/projects')
   const desktopNavRef = useRef(null)
   const desktopLinkRefs = useRef([])
   const [desktopIndicatorStyle, setDesktopIndicatorStyle] = useState(null)
@@ -54,11 +58,44 @@ export default function Layout({ children }) {
 
   const closeMobileNav = () => setMobileNavOpen(false)
 
+  const navigateToProjectsTarget = (event, shouldCloseMobile = false) => {
+    event.preventDefault()
+    navigate(projectsNavTarget)
+    if (shouldCloseMobile) closeMobileNav()
+  }
+
   useEffect(() => {
     if (!mobileNavMounted || mobileNavOpen) return
     const timeoutId = window.setTimeout(() => setMobileNavMounted(false), 220)
     return () => window.clearTimeout(timeoutId)
   }, [mobileNavMounted, mobileNavOpen])
+
+  useEffect(() => {
+    const isProjectsRoute = location.pathname.startsWith('/projects')
+
+    if (isProjectsRoute) {
+      const currentProjectsRoute = `${location.pathname}${location.search}`
+      setProjectsNavTarget(currentProjectsRoute)
+      try {
+        window.sessionStorage.setItem(LAST_PROJECTS_ROUTE_KEY, currentProjectsRoute)
+      } catch {
+        // noop
+      }
+      return
+    }
+
+    try {
+      const storedRoute = window.sessionStorage.getItem(LAST_PROJECTS_ROUTE_KEY)
+      if (storedRoute && storedRoute.startsWith('/projects')) {
+        setProjectsNavTarget(storedRoute)
+        return
+      }
+    } catch {
+      // noop
+    }
+
+    setProjectsNavTarget('/projects')
+  }, [location.pathname, location.search])
 
   useLayoutEffect(() => {
     updateDesktopIndicator()
@@ -113,6 +150,7 @@ export default function Layout({ children }) {
                 to={item.to}
                 end={item.to === '/'}
                 className={desktopNavClass}
+                onClick={item.to === '/projects' ? (event) => navigateToProjectsTarget(event) : undefined}
               >
                 {item.label}
               </NavLink>
@@ -194,7 +232,7 @@ export default function Layout({ children }) {
               <NavLink
                 to="/projects"
                 className={mobileNavClass}
-                onClick={closeMobileNav}
+                onClick={(event) => navigateToProjectsTarget(event, true)}
               >
                 Projects
               </NavLink>

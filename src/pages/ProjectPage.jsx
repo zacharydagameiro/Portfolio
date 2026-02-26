@@ -1,7 +1,11 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useParams, Link, useLocation } from 'react-router-dom'
 import projectsData from '../data/projects.json'
 import { ProjectIcon } from '../components/ProjectCard.jsx'
+import SidebarCard from '../components/sidebar/SidebarCard'
+import SidebarLinkItem from '../components/sidebar/SidebarLinkItem'
+import SidebarSection from '../components/sidebar/SidebarSection'
+import { SectionIcon } from '../components/sidebar/SidebarIcons'
 import { SITE_DESCRIPTION } from '../data/siteMeta'
 import { toProjectLink, getProjectLinkText } from '../utils/projectLinks'
 import { resolveAssetUrl } from '../utils/assetUrl'
@@ -9,67 +13,6 @@ import { resolveAssetUrl } from '../utils/assetUrl'
 const DEFAULT_TITLE = 'Zachary Gameiro — CS Portfolio'
 const DEFAULT_PROJECT_IMAGE = resolveAssetUrl('/profile.jpg')
 const VIDEO_FILE_PATTERN = /\.(mp4|webm|ogg|mov|m4v)(\?.*)?$/i
-
-const ExternalLinkIcon = ({ className = 'h-3.5 w-3.5' }) => (
-  <svg className={className} fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor" aria-hidden>
-    <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5h6m0 0v6m0-6L10.5 13.5" />
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      d="M10.5 6H8.25A3.75 3.75 0 0 0 4.5 9.75v6A3.75 3.75 0 0 0 8.25 19.5h6A3.75 3.75 0 0 0 18 15.75V13.5"
-    />
-  </svg>
-)
-
-const SidebarLinkIcon = ({ type, className = 'h-4 w-4' }) => {
-  if (type === 'google') {
-    return (
-      <svg className={className} viewBox="0 0 24 24" aria-hidden>
-        <path
-          fill="#EA4335"
-          d="M12 10.2v3.9h5.5c-.2 1.3-1.5 3.8-5.5 3.8-3.3 0-6-2.7-6-6s2.7-6 6-6c1.9 0 3.2.8 3.9 1.5l2.7-2.6C16.9 3.2 14.7 2.2 12 2.2 6.6 2.2 2.2 6.6 2.2 12s4.4 9.8 9.8 9.8c5.6 0 9.3-4 9.3-9.6 0-.6-.1-1.1-.2-1.6H12Z"
-        />
-        <path
-          fill="#34A853"
-          d="M2.2 12c0 5.4 4.4 9.8 9.8 9.8 5.6 0 9.3-4 9.3-9.6 0-.6-.1-1.1-.2-1.6H12v3.9h5.5c-.2 1.3-1.5 3.8-5.5 3.8-3.3 0-6-2.7-6-6Z"
-        />
-        <path fill="#FBBC05" d="M4.5 7.4 7.7 9.7c.9-1.8 2.5-3 4.3-3 1.9 0 3.2.8 3.9 1.5l2.7-2.6C16.9 3.2 14.7 2.2 12 2.2c-3.8 0-7.2 2.2-8.8 5.2Z" />
-        <path fill="#4285F4" d="M2.2 12c0 1.6.4 3.2 1.3 4.6l3.4-2.6c-.3-.6-.5-1.3-.5-2s.2-1.4.5-2L3.5 7.4A9.5 9.5 0 0 0 2.2 12Z" />
-      </svg>
-    )
-  }
-
-  if (type === 'repo') {
-    return (
-      <svg className={className} viewBox="0 0 16 16" fill="currentColor" aria-hidden>
-        <path d="M8 0C3.58 0 0 3.58 0 8a8.002 8.002 0 0 0 5.47 7.59c.4.08.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.95-.82-1.15-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.5-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82A7.56 7.56 0 0 1 8 3.8c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.002 8.002 0 0 0 16 8c0-4.42-3.58-8-8-8Z" />
-      </svg>
-    )
-  }
-
-  if (type === 'case-study') {
-    return (
-      <svg className={className} fill="none" viewBox="0 0 24 24" strokeWidth={1.7} stroke="currentColor" aria-hidden>
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          d="M19.5 7.5v9A2.25 2.25 0 0 1 17.25 18.75H6.75A2.25 2.25 0 0 1 4.5 16.5v-9A2.25 2.25 0 0 1 6.75 5.25h10.5A2.25 2.25 0 0 1 19.5 7.5Z"
-        />
-        <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 9h7.5m-7.5 3h7.5m-7.5 3h4.5" />
-      </svg>
-    )
-  }
-
-  return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" strokeWidth={1.7} stroke="currentColor" aria-hidden>
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="M3.75 12A8.25 8.25 0 0 1 12 3.75m0 0A8.25 8.25 0 0 1 20.25 12M12 3.75c2.2 2.12 3.5 5.02 3.5 8.25S14.2 18.13 12 20.25m0-16.5c-2.2 2.12-3.5 5.02-3.5 8.25S9.8 18.13 12 20.25m-7.85-5.25h15.7"
-      />
-    </svg>
-  )
-}
 
 const upsertMetaTag = (attribute, key, content) => {
   let tag = document.head.querySelector(`meta[${attribute}="${key}"]`)
@@ -82,6 +25,27 @@ const upsertMetaTag = (attribute, key, content) => {
   const previousContent = tag.getAttribute('content')
   tag.setAttribute('content', content)
   return { tag, existed, previousContent }
+}
+
+const getSidebarLinkType = (url, fallback = 'website') => {
+  const normalized = typeof url === 'string' ? url.toLowerCase() : ''
+  if (normalized.includes('reddit.com') || normalized.includes('redd.it')) return 'reddit'
+  if (normalized.includes('github.com')) return 'github'
+  return fallback
+}
+
+const getProjectLinkLabel = (link, fallbackType = 'link') => {
+  if (!link) return ''
+  if (typeof link.label === 'string' && link.label.trim().length > 0) return link.label.trim()
+
+  const url = typeof link.url === 'string' ? link.url.toLowerCase() : ''
+  if (url.includes('reddit.com') || url.includes('redd.it')) return 'Reddit thread'
+  if (url.includes('github.com')) return 'GitHub repository'
+  if (/run\.app|vercel\.app|netlify\.app/i.test(url)) return 'Live demo'
+  if (fallbackType === 'case-study') return 'Case study'
+  if (fallbackType === 'repo') return 'Repository'
+  if (fallbackType === 'demo') return 'Live demo'
+  return 'Open link'
 }
 
 export default function ProjectPage() {
@@ -111,7 +75,10 @@ export default function ProjectPage() {
         poster: resolveAssetUrl(item?.poster)
       }))
     : []
+  const hasScreenshots = screenshotsList.length > 0
   const [lightboxIndex, setLightboxIndex] = useState(null)
+  const [showMediaCue, setShowMediaCue] = useState(false)
+  const mediaSectionRef = useRef(null)
   const isLightboxOpen = lightboxIndex !== null && screenshotsList.length > 0
   const activeScreenshot = isLightboxOpen ? screenshotsList[lightboxIndex] : null
   const isVideoMedia = (item) => {
@@ -194,6 +161,35 @@ export default function ProjectPage() {
     }
   }, [isLightboxOpen, screenshotsList.length])
 
+  useEffect(() => {
+    if (!hasScreenshots) {
+      setShowMediaCue(false)
+      return
+    }
+
+    const updateMediaCue = () => {
+      const section = mediaSectionRef.current
+      if (!section) {
+        setShowMediaCue(false)
+        return
+      }
+
+      const rect = section.getBoundingClientRect()
+      const sectionIsVisible = rect.top < window.innerHeight && rect.bottom > 0
+      const sectionBelowViewport = rect.top > window.innerHeight * 0.9
+      setShowMediaCue(sectionBelowViewport && !sectionIsVisible)
+    }
+
+    updateMediaCue()
+    window.addEventListener('scroll', updateMediaCue, { passive: true })
+    window.addEventListener('resize', updateMediaCue)
+
+    return () => {
+      window.removeEventListener('scroll', updateMediaCue)
+      window.removeEventListener('resize', updateMediaCue)
+    }
+  }, [hasScreenshots, slug])
+
   if (!project) {
     return (
       <div className="text-center py-12">
@@ -266,39 +262,35 @@ export default function ProjectPage() {
   const sidebarLinks = useMemo(() => {
     const links = []
     if (demoLink) {
-      const isGoogleHosted = /(?:^|\.)google\./i.test(demoLink.url) || /run\.app/i.test(demoLink.url)
       links.push({
         key: 'demo',
         href: demoLink.url,
-        title: getProjectLinkText(demoLink),
-        text: getProjectLinkText(demoLink),
-        type: isGoogleHosted ? 'google' : 'demo',
-        useMonoText: false
+        label: getProjectLinkLabel(demoLink, 'demo'),
+        type: getSidebarLinkType(demoLink.url, 'website'),
       })
     }
     if (repoLink) {
       links.push({
         key: 'repo',
         href: repoLink.url,
-        title: repoLink.url,
-        text: repoLink.url,
-        type: 'repo',
-        useMonoText: true
+        label: getProjectLinkLabel(repoLink, 'repo'),
+        type: getSidebarLinkType(repoLink.url, 'github'),
       })
     }
     if (caseStudyLink) {
       links.push({
         key: 'case-study',
         href: caseStudyLink.url,
-        title: getProjectLinkText(caseStudyLink),
-        text: getProjectLinkText(caseStudyLink),
-        type: 'case-study',
-        useMonoText: false
+        label: getProjectLinkLabel(caseStudyLink, 'case-study'),
+        type: getSidebarLinkType(caseStudyLink.url, 'website'),
       })
     }
     return links
   }, [caseStudyLink, demoLink, repoLink])
   const hasHeroLinks = Boolean(demoLink || repoLink || caseStudyLink)
+  const demoLinkLabel = getProjectLinkLabel(demoLink, 'demo')
+  const repoLinkLabel = getProjectLinkLabel(repoLink, 'repo')
+  const caseStudyLinkLabel = getProjectLinkLabel(caseStudyLink, 'case-study')
   const problemText = longDescription || description || shortDescription
   const heroValueProp = valueProp || shortDescription
 
@@ -316,7 +308,6 @@ export default function ProjectPage() {
   const hasMotivation = typeof motivation === 'string' && motivation.trim().length > 0
   const hasResults = Array.isArray(results) && results.length > 0
   const hasReferences = Array.isArray(references) && references.length > 0
-  const hasScreenshots = screenshotsList.length > 0
   const sectionNavItems = useMemo(
     () =>
       [
@@ -354,13 +345,17 @@ export default function ProjectPage() {
     })
   }
 
+  const handleScrollToMedia = () => {
+    const section = mediaSectionRef.current
+    if (!section) return
+    section.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
+
   return (
     <article className="overflow-x-clip pb-12">
-      {/* Wider container on desktop; remove “boxed in whitespace” feel */}
-      {/* Keep one consistent top offset across breakpoints */}
-      <div className="mx-auto max-w-6xl -mt-6 px-0 sm:px-6 lg:px-4">
+      <div className="-mt-6">
         {/* Back link above the hero across all breakpoints */}
-        <div className="px-4 sm:px-0">
+        <div>
           <Link to={backToProjectsUrl} className="mb-4 inline-block text-sm text-slate-600 hover:text-slate-900">
             ← Back to projects
           </Link>
@@ -442,7 +437,7 @@ export default function ProjectPage() {
                         {quickFacts.map((fact) => (
                           <span
                             key={fact.label}
-                            className={fact.label === 'Stack' ? 'flex min-w-0 items-center gap-1 overflow-hidden' : 'flex shrink-0 items-center gap-1'}
+                            className={fact.label === 'Stack' ? 'hidden min-w-0 items-center gap-1 overflow-hidden sm:flex' : 'flex shrink-0 items-center gap-1'}
                           >
                             <span className="shrink-0 font-semibold uppercase tracking-wide">{fact.label}</span>
                             <span
@@ -465,10 +460,10 @@ export default function ProjectPage() {
                         href={demoLink.url}
                         target="_blank"
                         rel="noreferrer"
-                        className="inline-flex items-center text-xs font-semibold text-sky-100 underline decoration-white/40 underline-offset-2 hover:text-white"
-                        title={getProjectLinkText(demoLink)}
+                        className="inline-flex items-center rounded-full border border-white/20 bg-slate-950/45 px-3 py-1.5 text-xs font-medium text-slate-50 backdrop-blur hover:bg-slate-950/60"
+                        title={demoLink.url}
                       >
-                        <span className="max-w-[16rem] truncate">{getProjectLinkText(demoLink)}</span>{' '}
+                        <span className="max-w-[14rem] truncate">{demoLinkLabel}</span>{' '}
                         <span className="ml-1" aria-hidden>↗</span>
                       </a>
                     )}
@@ -478,9 +473,9 @@ export default function ProjectPage() {
                         target="_blank"
                         rel="noreferrer"
                         className="inline-flex items-center rounded-full border border-white/15 bg-slate-950/40 px-3 py-1.5 text-xs font-medium text-slate-50 backdrop-blur hover:bg-slate-950/60"
-                        title={getProjectLinkText(caseStudyLink)}
+                        title={caseStudyLink.url}
                       >
-                        <span className="max-w-[14rem] truncate">{getProjectLinkText(caseStudyLink)}</span>{' '}
+                        <span className="max-w-[14rem] truncate">{caseStudyLinkLabel}</span>{' '}
                         <span className="ml-1" aria-hidden>↗</span>
                       </a>
                     )}
@@ -490,9 +485,9 @@ export default function ProjectPage() {
                         target="_blank"
                         rel="noreferrer"
                         className="inline-flex items-center rounded-full border border-white/15 bg-slate-950/40 px-3 py-1.5 text-xs font-medium text-slate-50 backdrop-blur hover:bg-slate-950/60"
-                        title={getProjectLinkText(repoLink)}
+                        title={repoLink.url}
                       >
-                        <span className="max-w-[14rem] truncate">{getProjectLinkText(repoLink)}</span>{' '}
+                        <span className="max-w-[14rem] truncate">{repoLinkLabel}</span>{' '}
                         <span className="ml-1" aria-hidden>↗</span>
                       </a>
                     )}
@@ -503,175 +498,176 @@ export default function ProjectPage() {
           </div>
         </div>
 
-        {/* Body padding returns on mobile so text isn’t edge-to-edge */}
-        <div className="px-4 sm:px-0">
+        <div>
           {/* Keep the overlap look only on sm+ */}
           <div className="mt-6 sm:-mt-8">
-            <div className="grid gap-6 lg:grid-cols-[minmax(0,2.5fr)_minmax(240px,1fr)]">
-              <div className="space-y-8 rounded-xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
-                {sectionNavItems.length > 0 && (
-                  <nav
-                    aria-label="Project sections"
-                    className="-mt-1 flex flex-wrap gap-2 border-b border-slate-100 pb-4"
-                  >
-                    {sectionNavItems.map((item) => (
-                      <button
-                        key={item.id}
-                        type="button"
-                        onClick={() => handleSectionJump(item.id)}
-                        className="inline-flex items-center rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-medium text-slate-700 transition hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900"
-                      >
-                        {item.label}
-                      </button>
-                    ))}
-                  </nav>
-                )}
-
-                <section id="overview" className="scroll-mt-28">
-                  <h2 className="text-base font-semibold text-slate-900">At a glance</h2>
-                  <div className="mt-3 grid gap-6 md:grid-cols-2">
-                    <div>
-                      <h3 className="text-sm font-medium text-slate-900">What it does</h3>
-                      <p className="mt-1 text-sm leading-relaxed text-slate-600">{problemText}</p>
-                    </div>
-                    {Array.isArray(highlights) && highlights.length > 0 && (
-                      <div>
-                        <h3 className="text-sm font-medium text-slate-900">Highlights</h3>
-                        <ul className="mt-2 space-y-1.5 text-sm text-slate-600">
-                          {highlights.map((item) => (
-                            <li key={item} className="flex gap-2">
-                              <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-slate-400" />
-                              <span>{item}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-                  </div>
-                </section>
-
-                {hasMotivation && (
-                  <section id="motivation" className="scroll-mt-28">
-                    <h2 className="text-base font-semibold text-slate-900">Motivation</h2>
-                    <p className="mt-2 text-sm leading-relaxed text-slate-600">{motivation}</p>
-                  </section>
-                )}
-
-                {hasArchitecture && (
-                  <section id="architecture" className="scroll-mt-28">
-                    <h2 className="text-base font-semibold text-slate-900">Architecture</h2>
-                    {Array.isArray(architectureSteps) && architectureSteps.length > 0 && (
-                      <div className="mt-3 flex flex-wrap items-center gap-2 text-xs sm:text-sm">
-                        {architectureSteps.map((step, index) => (
-                          <div key={step} className="flex items-center gap-2">
-                            <div className="rounded-full bg-slate-100 px-3 py-1 font-medium text-slate-800">{step}</div>
-                            {index < architectureSteps.length - 1 && (
-                              <span className="text-slate-400" aria-hidden>→</span>
-                            )}
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                    {Array.isArray(architectureNotes) && architectureNotes.length > 0 && (
-                      <ul className="mt-3 space-y-1.5 text-sm text-slate-600">
-                        {architectureNotes.map((note) => (
-                          <li key={note} className="flex gap-2">
-                            <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-slate-400" />
-                            <span>{note}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-                  </section>
-                )}
-
-                {Array.isArray(challenges) && challenges.length > 0 && (
-                  <section>
-                    <h2 className="text-base font-semibold text-slate-900">Challenges &amp; tradeoffs</h2>
-                    <ul className="mt-2 space-y-1.5 text-sm text-slate-600">
-                      {challenges.map((challenge) => (
-                        <li key={challenge} className="flex gap-2">
-                          <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-slate-400" />
-                          <span>{challenge}</span>
-                        </li>
+            <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_288px]">
+              <div className="space-y-6">
+                <div className="space-y-8 rounded-xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+                  {sectionNavItems.length > 0 && (
+                    <nav
+                      aria-label="Project sections"
+                      className="-mt-1 flex flex-wrap gap-2 border-b border-slate-100 pb-4"
+                    >
+                      {sectionNavItems.map((item) => (
+                        <button
+                          key={item.id}
+                          type="button"
+                          onClick={() => handleSectionJump(item.id)}
+                          className="inline-flex items-center rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-medium text-slate-700 transition hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900"
+                        >
+                          {item.label}
+                        </button>
                       ))}
-                    </ul>
-                  </section>
-                )}
+                    </nav>
+                  )}
 
-                {hasResults && (
-                  <section id="results" className="scroll-mt-28">
-                    <h2 className="text-base font-semibold text-slate-900">Results</h2>
-                    <div className="mt-3 grid gap-3 sm:grid-cols-2">
-                      {results.map((result) =>
-                        typeof result === 'string' ? (
-                          <div
-                            key={result}
-                            className="rounded-lg border border-slate-100 bg-slate-50 px-3 py-2 text-sm text-slate-700"
-                          >
-                            {result}
-                          </div>
-                        ) : (
-                          <div
-                            key={`${result.label}-${result.value}`}
-                            className="rounded-lg border border-slate-100 bg-slate-50 px-3 py-2"
-                          >
-                            <div className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">
-                              {result.label}
-                            </div>
-                            <div className="mt-0.5 text-sm font-medium text-slate-900">{result.value}</div>
-                          </div>
-                        )
+                  <section id="overview" className="scroll-mt-28">
+                    <h2 className="text-base font-semibold text-slate-900">At a glance</h2>
+                    <div className="mt-3 grid gap-6 md:grid-cols-2">
+                      <div>
+                        <h3 className="text-sm font-medium text-slate-900">What it does</h3>
+                        <p className="mt-1 text-sm leading-relaxed text-slate-600">{problemText}</p>
+                      </div>
+                      {Array.isArray(highlights) && highlights.length > 0 && (
+                        <div>
+                          <h3 className="text-sm font-medium text-slate-900">Highlights</h3>
+                          <ul className="mt-2 space-y-1.5 text-sm text-slate-600">
+                            {highlights.map((item) => (
+                              <li key={item} className="flex gap-2">
+                                <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-slate-400" />
+                                <span>{item}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
                       )}
                     </div>
                   </section>
-                )}
 
-                {hasReferences && (
-                  <section id="references" className="scroll-mt-28">
-                    <h2 className="text-base font-semibold text-slate-900">References &amp; credits</h2>
-                    <ul className="mt-2 space-y-1.5 text-sm text-slate-600">
-                      {references.map((reference) => (
-                        <li key={`${reference.label}-${reference.href}`} className="flex gap-2">
-                          <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-slate-400" />
-                          <span>
-                            <a
-                              href={reference.href}
-                              target="_blank"
-                              rel="noreferrer"
-                              className="font-medium text-slate-700 underline-offset-2 hover:text-slate-900 hover:underline"
-                            >
-                              {reference.label}
-                            </a>
-                            {reference.note ? ` — ${reference.note}` : ''}
-                          </span>
-                        </li>
-                      ))}
-                    </ul>
-                  </section>
-                )}
-
-                <section id="next" className="scroll-mt-28">
-                  <h2 className="text-base font-semibold text-slate-900">What I’d do next</h2>
-                  {Array.isArray(nextSteps) && nextSteps.length > 0 ? (
-                    <ul className="mt-2 space-y-1.5 text-sm text-slate-600">
-                      {nextSteps.map((step) => (
-                        <li key={step} className="flex gap-2">
-                          <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-slate-400" />
-                          <span>{step}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  ) : (
-                    <p className="mt-2 text-sm leading-relaxed text-slate-600">
-                      With more time, I’d deepen the instrumentation (logging, metrics, tests) and round out documentation
-                      so this could be dropped into a team codebase with minimal onboarding.
-                    </p>
+                  {hasMotivation && (
+                    <section id="motivation" className="scroll-mt-28">
+                      <h2 className="text-base font-semibold text-slate-900">Motivation</h2>
+                      <p className="mt-2 text-sm leading-relaxed text-slate-600">{motivation}</p>
+                    </section>
                   )}
-                </section>
+
+                  {hasArchitecture && (
+                    <section id="architecture" className="scroll-mt-28">
+                      <h2 className="text-base font-semibold text-slate-900">Architecture</h2>
+                      {Array.isArray(architectureSteps) && architectureSteps.length > 0 && (
+                        <div className="mt-3 flex flex-wrap items-center gap-2 text-xs sm:text-sm">
+                          {architectureSteps.map((step, index) => (
+                            <div key={step} className="flex items-center gap-2">
+                              <div className="rounded-full bg-slate-100 px-3 py-1 font-medium text-slate-800">{step}</div>
+                              {index < architectureSteps.length - 1 && (
+                                <span className="text-slate-400" aria-hidden>→</span>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                      {Array.isArray(architectureNotes) && architectureNotes.length > 0 && (
+                        <ul className="mt-3 space-y-1.5 text-sm text-slate-600">
+                          {architectureNotes.map((note) => (
+                            <li key={note} className="flex gap-2">
+                              <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-slate-400" />
+                              <span>{note}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </section>
+                  )}
+
+                  {Array.isArray(challenges) && challenges.length > 0 && (
+                    <section>
+                      <h2 className="text-base font-semibold text-slate-900">Challenges &amp; tradeoffs</h2>
+                      <ul className="mt-2 space-y-1.5 text-sm text-slate-600">
+                        {challenges.map((challenge) => (
+                          <li key={challenge} className="flex gap-2">
+                            <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-slate-400" />
+                            <span>{challenge}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </section>
+                  )}
+
+                  {hasResults && (
+                    <section id="results" className="scroll-mt-28">
+                      <h2 className="text-base font-semibold text-slate-900">Results</h2>
+                      <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                        {results.map((result) =>
+                          typeof result === 'string' ? (
+                            <div
+                              key={result}
+                              className="rounded-lg border border-slate-100 bg-slate-50 px-3 py-2 text-sm text-slate-700"
+                            >
+                              {result}
+                            </div>
+                          ) : (
+                            <div
+                              key={`${result.label}-${result.value}`}
+                              className="rounded-lg border border-slate-100 bg-slate-50 px-3 py-2"
+                            >
+                              <div className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">
+                                {result.label}
+                              </div>
+                              <div className="mt-0.5 text-sm font-medium text-slate-900">{result.value}</div>
+                            </div>
+                          )
+                        )}
+                      </div>
+                    </section>
+                  )}
+
+                  {hasReferences && (
+                    <section id="references" className="scroll-mt-28">
+                      <h2 className="text-base font-semibold text-slate-900">References &amp; credits</h2>
+                      <ul className="mt-2 space-y-1.5 text-sm text-slate-600">
+                        {references.map((reference) => (
+                          <li key={`${reference.label}-${reference.href}`} className="flex gap-2">
+                            <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-slate-400" />
+                            <span>
+                              <a
+                                href={reference.href}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="font-medium text-slate-700 underline-offset-2 hover:text-slate-900 hover:underline"
+                              >
+                                {reference.label}
+                              </a>
+                              {reference.note ? ` — ${reference.note}` : ''}
+                            </span>
+                          </li>
+                        ))}
+                      </ul>
+                    </section>
+                  )}
+
+                  <section id="next" className="scroll-mt-28">
+                    <h2 className="text-base font-semibold text-slate-900">What I’d do next</h2>
+                    {Array.isArray(nextSteps) && nextSteps.length > 0 ? (
+                      <ul className="mt-2 space-y-1.5 text-sm text-slate-600">
+                        {nextSteps.map((step) => (
+                          <li key={step} className="flex gap-2">
+                            <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-slate-400" />
+                            <span>{step}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p className="mt-2 text-sm leading-relaxed text-slate-600">
+                        With more time, I’d deepen the instrumentation (logging, metrics, tests) and round out documentation
+                        so this could be dropped into a team codebase with minimal onboarding.
+                      </p>
+                    )}
+                  </section>
+                </div>
 
                 {(hasScreenshots || (Array.isArray(artifacts) && artifacts.length > 0)) ? (
-                  <section>
+                  <section id="media" ref={mediaSectionRef} className="scroll-mt-28 rounded-xl border border-slate-200 bg-white p-7 shadow-sm sm:p-9">
                     <h2 className="text-base font-semibold text-slate-900">Links &amp; artifacts</h2>
                     {hasScreenshots && (
                       <div className="mt-3 grid gap-3 sm:grid-cols-2">
@@ -731,78 +727,52 @@ export default function ProjectPage() {
                 ) : null}
               </div>
 
-              <aside className="min-w-0 space-y-4 lg:sticky lg:top-24">
-                <div className="min-w-0 overflow-hidden rounded-xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
-                  <div className="min-w-0 space-y-4">
-                    {sidebarLinks.length > 0 && (
-                      <div>
-                        <h2 className="text-xs font-semibold uppercase tracking-wide text-slate-500">Links</h2>
-                        <ul className="mt-2 min-w-0 space-y-2">
-                          {sidebarLinks.map((item) => (
-                            <li key={item.key} className="min-w-0">
-                              <a
-                                href={item.href}
-                                target="_blank"
-                                rel="noreferrer"
-                                className="group flex w-full min-w-0 max-w-full items-start justify-between gap-2 overflow-hidden rounded-lg border border-slate-200 bg-white px-2.5 py-2 text-xs text-slate-700 transition hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900"
-                                title={item.title}
-                              >
-                                <span className="flex min-w-0 flex-1 items-start gap-2">
-                                  <SidebarLinkIcon type={item.type} className="h-4 w-4 shrink-0 text-slate-500" />
-                                  <span
-                                    className={`block min-w-0 max-w-full ${
-                                      item.useMonoText
-                                        ? 'font-mono text-[11px] leading-4 break-all [overflow-wrap:anywhere]'
-                                        : 'truncate font-medium'
-                                    }`}
-                                  >
-                                    {item.text}
-                                  </span>
-                                </span>
-                                <ExternalLinkIcon className="h-3.5 w-3.5 shrink-0 text-slate-400 transition group-hover:text-slate-700" />
-                              </a>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
+              <aside className="min-w-0 space-y-6 lg:sticky lg:top-24">
+                <SidebarCard className="min-w-0 space-y-6">
+                  {sidebarLinks.length > 0 && (
+                    <SidebarSection title="Project links" icon={<SectionIcon type="links" />} divider={false}>
+                      <ul className="mt-2 space-y-1.5">
+                        {sidebarLinks.map((item) => (
+                          <li key={item.key}>
+                            <SidebarLinkItem href={item.href} label={item.label} iconType={item.type} external />
+                          </li>
+                        ))}
+                      </ul>
+                    </SidebarSection>
+                  )}
 
-                    <div>
-                      <h2 className="text-xs font-semibold uppercase tracking-wide text-slate-500">Project info</h2>
-                      <dl className="mt-2 space-y-1 text-sm text-slate-600">
-                        {status && (
-                          <div className="flex items-center justify-between">
-                            <dt className="text-slate-500">Status</dt>
-                            <dd className="font-medium text-slate-900">{status}</dd>
-                          </div>
-                        )}
-                        {year && (
-                          <div className="flex items-center justify-between">
-                            <dt className="text-slate-500">Year</dt>
-                            <dd className="font-medium text-slate-900">{year}</dd>
-                          </div>
-                        )}
-                      </dl>
-                    </div>
+                  <SidebarSection title="Project info" icon={<SectionIcon type="info" />} divider={sidebarLinks.length > 0}>
+                    <dl className="mt-2 space-y-1 text-sm text-slate-600">
+                      {status && (
+                        <div className="flex items-center justify-between">
+                          <dt className="text-slate-500">Status</dt>
+                          <dd className="font-medium text-slate-900">{status}</dd>
+                        </div>
+                      )}
+                      {year && (
+                        <div className="flex items-center justify-between">
+                          <dt className="text-slate-500">Year</dt>
+                          <dd className="font-medium text-slate-900">{year}</dd>
+                        </div>
+                      )}
+                    </dl>
+                  </SidebarSection>
 
-                    {sidebarStackItems.length > 0 && (
-                      <div>
-                        <h2 className="text-xs font-semibold uppercase tracking-wide text-slate-500">Stack</h2>
-                        <ul className="mt-2 flex flex-wrap gap-1.5">
-                          {sidebarStackItems.map((item) => (
-                            <li
-                              key={item}
-                              className="inline-flex items-center rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-700"
-                            >
-                              {item}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-
-                  </div>
-                </div>
+                  {sidebarStackItems.length > 0 && (
+                    <SidebarSection title="Stack" icon={<SectionIcon type="skills" />}>
+                      <ul className="mt-2 flex flex-wrap gap-1.5">
+                        {sidebarStackItems.map((item) => (
+                          <li
+                            key={item}
+                            className="inline-flex items-center rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-700"
+                          >
+                            {item}
+                          </li>
+                        ))}
+                      </ul>
+                    </SidebarSection>
+                  )}
+                </SidebarCard>
               </aside>
             </div>
 
@@ -832,6 +802,23 @@ export default function ProjectPage() {
           </div>
         </div>
       </div>
+
+      {showMediaCue && (
+        <button
+          type="button"
+          onClick={handleScrollToMedia}
+          className="fixed bottom-[calc(env(safe-area-inset-bottom)+0.75rem)] right-[calc(env(safe-area-inset-right)+0.75rem)] z-30 rounded-full border border-slate-200 bg-white/95 px-4 py-2.5 text-left shadow-lg backdrop-blur-sm transition hover:border-slate-300 hover:bg-white sm:bottom-6 sm:right-6"
+          aria-label="Scroll to project media section"
+        >
+          <span className="block text-[10px] font-semibold uppercase tracking-wide text-slate-500">Media available</span>
+          <span className="mt-0.5 inline-flex items-center gap-1 text-sm font-medium text-slate-900">
+            Scroll to media
+            <span aria-hidden className="inline-block animate-bounce">
+              ↓
+            </span>
+          </span>
+        </button>
+      )}
 
       {isLightboxOpen && activeScreenshot && (
         <div

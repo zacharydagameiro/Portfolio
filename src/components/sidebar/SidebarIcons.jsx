@@ -63,6 +63,14 @@ export function ContactIcon({ type, className = 'h-4 w-4 text-slate-500 shrink-0
     )
   }
 
+  if (type === 'reddit') {
+    return (
+      <svg className={className} fill="currentColor" viewBox="0 0 24 24" aria-hidden>
+        <path d="M14.473 15.424a.915.915 0 1 1-1.83 0 .915.915 0 0 1 1.83 0Zm-3.116-.915a.915.915 0 1 0 0 1.83.915.915 0 0 0 0-1.83Zm6.04-4.066a1.296 1.296 0 0 0-2.193-.928 10.038 10.038 0 0 0-4.783-1.204l.807-3.804 2.635.56a1.283 1.283 0 1 0 .248-1.188l-2.973-.631a.56.56 0 0 0-.662.432l-.929 4.378a10.055 10.055 0 0 0-4.933 1.217 1.295 1.295 0 1 0-.924 2.155c0 .082.002.163.007.245a3.607 3.607 0 0 0-.007.234c0 2.753 3.2 4.987 7.144 4.987 3.944 0 7.144-2.234 7.144-4.987 0-.079-.003-.157-.008-.234.005-.082.008-.164.008-.245a1.296 1.296 0 0 0-.581-1.087Zm-6.563 5.29c-1.135 0-2.14-.255-2.688-.682a.311.311 0 1 1 .382-.492c.425.332 1.274.552 2.306.552s1.88-.22 2.306-.552a.311.311 0 1 1 .382.492c-.548.427-1.553.682-2.688.682Z" />
+      </svg>
+    )
+  }
+
   return null
 }
 
@@ -118,6 +126,15 @@ export function SectionIcon({ type, className = 'h-4 w-4 text-slate-500 shrink-0
     return (
       <svg className={className} fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" aria-hidden>
         <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25a2.25 2.25 0 0 1-2.25-2.25V6ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25A2.25 2.25 0 0 1 13.5 18v-2.25Z" />
+      </svg>
+    )
+  }
+
+  if (type === 'info') {
+    return (
+      <svg className={className} fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" aria-hidden>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M11.25 11.25h1.5v5.25h1.5m-1.5-9h.008v.008h-.008V7.5Z" />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
       </svg>
     )
   }
