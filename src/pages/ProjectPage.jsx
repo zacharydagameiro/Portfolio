@@ -23,6 +23,7 @@ const upsertMetaTag = (attribute, key, content) => {
 }
 
 export default function ProjectPage() {
+  const resumeUrl = `${import.meta.env.BASE_URL}resume.pdf`
   const { slug } = useParams()
   const location = useLocation()
   const backToProjectsUrl = location.search ? `/projects${location.search}` : '/projects'
@@ -726,7 +727,7 @@ export default function ProjectPage() {
 
                     <div>
                       <a
-                        href="/resume.pdf"
+                        href={resumeUrl}
                         target="_blank"
                         rel="noreferrer"
                         className="inline-flex items-center rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-900 hover:bg-slate-50"

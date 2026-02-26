@@ -4,6 +4,7 @@ import aboutData from '../data/about.json'
 import Footer from './Footer'
 
 export default function Layout({ children }) {
+  const resumeUrl = `${import.meta.env.BASE_URL}resume.pdf`
   const [mobileNavOpen, setMobileNavOpen] = useState(false)
   const navClass = ({ isActive }) =>
     `transition ${isActive ? 'text-slate-900 font-medium' : 'text-slate-600 hover:text-slate-900'}`
@@ -47,7 +48,7 @@ export default function Layout({ children }) {
               |
             </span>
             <a
-              href="/resume.pdf"
+              href={resumeUrl}
               target="_blank"
               rel="noreferrer"
               className="text-slate-600 transition hover:text-slate-900"
@@ -130,7 +131,7 @@ export default function Layout({ children }) {
                 Projects
               </NavLink>
               <a
-                href="/resume.pdf"
+                href={resumeUrl}
                 target="_blank"
                 rel="noreferrer"
                 className="text-slate-600 transition hover:text-slate-900"

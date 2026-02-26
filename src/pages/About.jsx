@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import { Link } from 'react-router-dom'
 import aboutData from '../data/about.json'
 import Modal from '../components/Modal.jsx'
 import { ABOUT_LAST_UPDATED } from '../data/siteMeta'
@@ -250,9 +251,9 @@ export default function About() {
               ) : (
                 <>
                   See contact info on the{' '}
-                  <a href="/" className="text-blue-600 hover:underline">
+                  <Link to="/" className="text-blue-600 hover:underline">
                     homepage
-                  </a>
+                  </Link>
                   .
                 </>
               )}

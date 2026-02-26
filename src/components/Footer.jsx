@@ -4,6 +4,7 @@ import aboutData from '../data/about.json'
 const defaultName = 'Zachary Gameiro'
 
 export default function Footer() {
+  const resumeUrl = `${import.meta.env.BASE_URL}resume.pdf`
   const year = new Date().getFullYear()
   const { name = defaultName, tagline, contact = {}, links = {} } = aboutData
 
@@ -50,7 +51,7 @@ export default function Footer() {
                 </li>
               ))}
               <li>
-                <a href="/resume.pdf" target="_blank" rel="noreferrer" className="text-slate-700 transition hover:text-slate-900">
+                <a href={resumeUrl} target="_blank" rel="noreferrer" className="text-slate-700 transition hover:text-slate-900">
                   Resume
                 </a>
               </li>
