@@ -1,10 +1,11 @@
 import { Link } from 'react-router-dom'
 import aboutData from '../data/about.json'
+import { resolveAssetUrl } from '../utils/assetUrl'
 
 const defaultName = 'Zachary Gameiro'
 
 export default function Footer() {
-  const resumeUrl = `${import.meta.env.BASE_URL}resume.pdf`
+  const resumeUrl = resolveAssetUrl('/resume.pdf')
   const year = new Date().getFullYear()
   const { name = defaultName, tagline, contact = {}, links = {} } = aboutData
 

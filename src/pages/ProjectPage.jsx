@@ -4,9 +4,10 @@ import projectsData from '../data/projects.json'
 import { ProjectIcon } from '../components/ProjectCard.jsx'
 import { SITE_DESCRIPTION } from '../data/siteMeta'
 import { toProjectLink, getProjectLinkText } from '../utils/projectLinks'
+import { resolveAssetUrl } from '../utils/assetUrl'
 
 const DEFAULT_TITLE = 'Zachary Gameiro — CS Portfolio'
-const DEFAULT_PROJECT_IMAGE = '/profile.jpg'
+const DEFAULT_PROJECT_IMAGE = resolveAssetUrl('/profile.jpg')
 const VIDEO_FILE_PATTERN = /\.(mp4|webm|ogg|mov|m4v)(\?.*)?$/i
 
 const upsertMetaTag = (attribute, key, content) => {
@@ -23,7 +24,7 @@ const upsertMetaTag = (attribute, key, content) => {
 }
 
 export default function ProjectPage() {
-  const resumeUrl = `${import.meta.env.BASE_URL}resume.pdf`
+  const resumeUrl = resolveAssetUrl('/resume.pdf')
   const { slug } = useParams()
   const location = useLocation()
   const backToProjectsUrl = location.search ? `/projects${location.search}` : '/projects'
@@ -34,17 +35,22 @@ export default function ProjectPage() {
     typeof window !== 'undefined'
       ? `${window.location.origin}${location.pathname}${location.search}`
       : location.pathname
+  const metaImageSource = resolveAssetUrl(project?.coverImageUrl || DEFAULT_PROJECT_IMAGE)
   const metaImage =
-    typeof window !== 'undefined'
-      ? new URL(project?.coverImageUrl || DEFAULT_PROJECT_IMAGE, window.location.origin).href
-      : project?.coverImageUrl || DEFAULT_PROJECT_IMAGE
+    typeof window !== 'undefined' ? new URL(metaImageSource, window.location.origin).href : metaImageSource
   const currentProjectIndex = projectsData.findIndex((p) => p.slug === slug)
   const previousProject = currentProjectIndex > 0 ? projectsData[currentProjectIndex - 1] : null
   const nextProject =
     currentProjectIndex >= 0 && currentProjectIndex < projectsData.length - 1
       ? projectsData[currentProjectIndex + 1]
       : null
-  const screenshotsList = Array.isArray(project?.screenshots) ? project.screenshots : []
+  const screenshotsList = Array.isArray(project?.screenshots)
+    ? project.screenshots.map((item) => ({
+        ...item,
+        src: resolveAssetUrl(item?.src),
+        poster: resolveAssetUrl(item?.poster)
+      }))
+    : []
   const [lightboxIndex, setLightboxIndex] = useState(null)
   const isLightboxOpen = lightboxIndex !== null && screenshotsList.length > 0
   const activeScreenshot = isLightboxOpen ? screenshotsList[lightboxIndex] : null
@@ -192,7 +198,8 @@ export default function ProjectPage() {
           ? 'from-sky-500 to-sky-800'
           : 'from-slate-700 to-slate-900'
 
-  const hasCover = Boolean(coverImageUrl)
+  const resolvedCoverImageUrl = resolveAssetUrl(coverImageUrl)
+  const hasCover = Boolean(resolvedCoverImageUrl)
   const demoLink = toProjectLink(demoUrl)
   const repoLink = toProjectLink(repoUrl)
   const caseStudyLink = toProjectLink(caseStudyUrl)
@@ -288,7 +295,7 @@ export default function ProjectPage() {
             <>
               <div
                 className="absolute inset-0 bg-cover bg-center"
-                style={{ backgroundImage: `url(${coverImageUrl})` }}
+                style={{ backgroundImage: `url(${resolvedCoverImageUrl})` }}
                 aria-hidden
               />
 

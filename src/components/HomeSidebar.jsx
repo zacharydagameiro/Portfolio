@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { resolveAssetUrl } from '../utils/assetUrl'
 
 function LocationIcon({ type, className = "h-4 w-4 text-slate-500" }) {
   if (type === "home") {
@@ -151,15 +152,17 @@ function SkillsSection({ skills }) {
 
 export default function HomeSidebar({ about }) {
   const { name, profileImageUrl, contact, locations, location, languages, resumeUrl, skills } = about || {}
+  const resolvedProfileImageUrl = resolveAssetUrl(profileImageUrl)
+  const resolvedResumeUrl = resolveAssetUrl(resumeUrl)
   const locationList = Array.isArray(locations) ? locations : (location ? [{ label: location }] : [])
 
   return (
     <aside className="space-y-6 overflow-visible rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-      {(name || profileImageUrl) && (
+      {(name || resolvedProfileImageUrl) && (
         <section className="flex flex-col items-center text-center border-b border-slate-100 pb-6">
-          {profileImageUrl && (
+          {resolvedProfileImageUrl && (
             <img
-              src={profileImageUrl}
+              src={resolvedProfileImageUrl}
               alt={name || 'Profile'}
               className="h-28 w-28 rounded-full object-cover border-2 border-slate-200"
             />
@@ -264,14 +267,14 @@ export default function HomeSidebar({ about }) {
           </p>
         </section>
       )}
-      {resumeUrl && (
+      {resolvedResumeUrl && (
         <section className="border-t border-slate-100 pt-6">
           <h3 className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-slate-500">
             <SectionIconSmall type="resume" />
             Resume
           </h3>
           <a
-            href={resumeUrl}
+            href={resolvedResumeUrl}
             target="_blank"
             rel="noreferrer"
             className="mt-2 inline-flex items-center gap-2 rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800 transition"

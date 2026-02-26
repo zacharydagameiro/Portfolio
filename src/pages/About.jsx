@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import aboutData from '../data/about.json'
 import Modal from '../components/Modal.jsx'
 import { ABOUT_LAST_UPDATED } from '../data/siteMeta'
+import { resolveAssetUrl } from '../utils/assetUrl'
 
 const education = aboutData.education || []
 const experience = aboutData.experience || []
@@ -53,9 +54,10 @@ export default function About() {
         return item
       })
       .filter((item) => item?.label && item?.href)
+      .map((item) => ({ ...item, href: resolveAssetUrl(item.href) }))
 
     if (!normalized.length && aboutData.resumeUrl) {
-      normalized.push({ label: 'Resume', href: aboutData.resumeUrl })
+      normalized.push({ label: 'Resume', href: resolveAssetUrl(aboutData.resumeUrl) })
     }
 
     return normalized
@@ -157,7 +159,7 @@ export default function About() {
                       <div className="flex items-start gap-3">
                         {item.logoUrl && (
                           <img
-                            src={item.logoUrl}
+                            src={resolveAssetUrl(item.logoUrl)}
                             alt={`${item.school} logo`}
                             className="h-10 w-10 shrink-0 rounded-md border border-slate-200 bg-white object-contain p-1"
                           />
@@ -211,7 +213,7 @@ export default function About() {
                       <div className="flex items-start gap-3">
                         {item.logoUrl && (
                           <img
-                            src={item.logoUrl}
+                            src={resolveAssetUrl(item.logoUrl)}
                             alt={`${item.company} logo`}
                             className="h-10 w-10 shrink-0 rounded-md border border-slate-200 bg-white object-contain p-1"
                           />
@@ -269,7 +271,7 @@ export default function About() {
             <div className="flex items-center gap-4">
               {aboutData.profileImageUrl ? (
                 <img
-                  src={aboutData.profileImageUrl}
+                  src={resolveAssetUrl(aboutData.profileImageUrl)}
                   alt={aboutData.name || 'Profile'}
                   className="h-16 w-16 rounded-full object-cover border border-slate-200"
                 />
@@ -423,7 +425,7 @@ export default function About() {
             <div className="flex items-start gap-3">
               {selectedEducation.logoUrl && (
                 <img
-                  src={selectedEducation.logoUrl}
+                  src={resolveAssetUrl(selectedEducation.logoUrl)}
                   alt={`${selectedEducation.school} logo`}
                   className="h-12 w-12 shrink-0 rounded-md border border-slate-200 bg-white object-contain p-1"
                 />
@@ -472,7 +474,7 @@ export default function About() {
           <div className="space-y-3">
             {selectedExperience.logoUrl && (
               <img
-                src={selectedExperience.logoUrl}
+                src={resolveAssetUrl(selectedExperience.logoUrl)}
                 alt={`${selectedExperience.company} logo`}
                 className="h-12 w-12 rounded-md border border-slate-200 bg-white object-contain p-1"
               />

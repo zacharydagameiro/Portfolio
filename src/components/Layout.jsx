@@ -2,13 +2,15 @@ import { useState } from 'react'
 import { Link, NavLink } from 'react-router-dom'
 import aboutData from '../data/about.json'
 import Footer from './Footer'
+import { resolveAssetUrl } from '../utils/assetUrl'
 
 export default function Layout({ children }) {
-  const resumeUrl = `${import.meta.env.BASE_URL}resume.pdf`
+  const resumeUrl = resolveAssetUrl('/resume.pdf')
   const [mobileNavOpen, setMobileNavOpen] = useState(false)
   const navClass = ({ isActive }) =>
     `transition ${isActive ? 'text-slate-900 font-medium' : 'text-slate-600 hover:text-slate-900'}`
   const { name, profileImageUrl } = aboutData
+  const resolvedProfileImageUrl = resolveAssetUrl(profileImageUrl)
 
   return (
     <div className="flex min-h-screen flex-col bg-slate-50 text-slate-900">
@@ -18,9 +20,9 @@ export default function Layout({ children }) {
             to="/"
             className="flex items-center gap-2 text-lg font-semibold text-slate-800 transition hover:text-slate-600"
           >
-            {profileImageUrl && (
+            {resolvedProfileImageUrl && (
               <img
-                src={profileImageUrl}
+                src={resolvedProfileImageUrl}
                 alt=""
                 className="h-8 w-8 rounded-full border border-slate-200 object-cover"
               />

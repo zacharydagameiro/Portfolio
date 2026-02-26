@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { toProjectLink, getProjectLinkText } from '../utils/projectLinks'
+import { resolveAssetUrl } from '../utils/assetUrl'
 
 export function ProjectIcon({ category, className = 'h-4 w-4' }) {
   // Default: folder (general project)
@@ -100,7 +101,8 @@ export function ProjectIcon({ category, className = 'h-4 w-4' }) {
 export default function ProjectCard({ project, listSearch = '' }) {
   const { slug, title, caption, shortDescription, description, year, tags, repoUrl, demoUrl, category, coverImageUrl } = project
   const cardBlurb = shortDescription || description
-  const hasCoverImage = Boolean(coverImageUrl)
+  const resolvedCoverImageUrl = resolveAssetUrl(coverImageUrl)
+  const hasCoverImage = Boolean(resolvedCoverImageUrl)
   const demoLink = toProjectLink(demoUrl)
   const repoLink = toProjectLink(repoUrl)
   const iconColorClass =
@@ -123,7 +125,7 @@ export default function ProjectCard({ project, listSearch = '' }) {
       {hasCoverImage && (
         <div className="mb-3 overflow-hidden rounded-lg border border-slate-200 bg-slate-100">
           <img
-            src={coverImageUrl}
+            src={resolvedCoverImageUrl}
             alt={`${title} cover`}
             loading="lazy"
             decoding="async"

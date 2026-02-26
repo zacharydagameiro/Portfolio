@@ -5,6 +5,7 @@ import aboutData from '../data/about.json'
 import HomeSidebar from '../components/HomeSidebar'
 import ProjectCard from '../components/ProjectCard'
 import Modal from '../components/Modal.jsx'
+import { resolveAssetUrl } from '../utils/assetUrl'
 
 function SectionIcon({ type, className = 'h-5 w-5' }) {
   const c = className
@@ -171,7 +172,7 @@ export default function Home() {
                       <div className="flex items-start gap-3">
                         {item.logoUrl && (
                           <img
-                            src={item.logoUrl}
+                            src={resolveAssetUrl(item.logoUrl)}
                             alt={`${item.company} logo`}
                             className="h-10 w-10 shrink-0 rounded-md border border-slate-200 bg-white object-contain p-1"
                           />
@@ -224,7 +225,7 @@ export default function Home() {
                     <div className="flex items-start gap-2.5">
                       {item.logoUrl && (
                         <img
-                          src={item.logoUrl}
+                          src={resolveAssetUrl(item.logoUrl)}
                           alt={`${item.school} logo`}
                           className="mt-0.5 h-8 w-8 shrink-0 rounded-md border border-slate-200 bg-white object-contain p-1"
                         />
@@ -274,7 +275,7 @@ export default function Home() {
             <div className="flex items-start gap-3">
               {selectedEducation.logoUrl && (
                 <img
-                  src={selectedEducation.logoUrl}
+                  src={resolveAssetUrl(selectedEducation.logoUrl)}
                   alt={`${selectedEducation.school} logo`}
                   className="h-12 w-12 shrink-0 rounded-md border border-slate-200 bg-white object-contain p-1"
                 />
@@ -323,7 +324,7 @@ export default function Home() {
           <div className="space-y-3">
             {selectedExperience.logoUrl && (
               <img
-                src={selectedExperience.logoUrl}
+                src={resolveAssetUrl(selectedExperience.logoUrl)}
                 alt={`${selectedExperience.company} logo`}
                 className="h-12 w-12 rounded-md border border-slate-200 bg-white object-contain p-1"
               />
