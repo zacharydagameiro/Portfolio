@@ -1,0 +1,75 @@
+{
+  "name": "Zachary Gameiro",
+  "tagline": "Computing Science & Biochemistry Student | Systems & Applied ML",
+  "bio": "I'm a Computing Science and Biochemistry student at SFU, focused on systems and applied ML. I like building things end-to-end—from embedded hardware to pipelines and full-stack apps—and I'm always up for a tough problem. When I'm not coding, I'm usually outdoors or traveling.",
+  "profileImageUrl": "/profile.jpg",
+  "contact": {
+    "email": "zachary_gameiro@sfu.ca",
+    "phone": "(780) 340-9772",
+    "github": "https://github.com/zacharygameiro",
+    "linkedin": "https://linkedin.com/in/zacharygameiro"
+  },
+  "locations": [
+    { "label": "Edmonton, Alberta", "icon": "home", "tooltip": "Where I was born" },
+    { "label": "Burnaby, BC", "icon": "graduation", "tooltip": "Where I go to school" }
+  ],
+  "languages": [
+    { "label": "English", "tooltip": "My native language" },
+    { "label": "French", "tooltip": "I did French immersion, and my mother is a French teacher" },
+    { "label": "Portuguese", "tooltip": "My family is Portuguese; it was my first baby language" },
+    { "label": "Spanish", "tooltip": "Very similar to Portuguese—I'm conversationally comfortable. Done lots of traveling." }
+  ],
+  "resumeUrl": "/resume.pdf",
+  "resumes": [
+    { "label": "General", "href": "/resume.pdf" },
+    { "label": "ML / AI", "href": "/resume-ml-ai.pdf" }
+  ],
+  "education": [
+    {
+      "school": "Simon Fraser University",
+      "logoUrl": "/logos/sfu-logo.jpg",
+      "degree": "Bachelor of Science",
+      "year": "Expected December 2026",
+      "dates": "September 2021 – Expected December 2026",
+      "location": "Burnaby, BC",
+      "program": "Joint major in Computing Science and Microbiology & Biochemistry (MBB).",
+      "summary": "Joint major in Computing Science + MBB, focused on systems, applied ML, and biomedical computing.",
+      "details": "Pursuing a BSc joint major in Computing Science and Microbiology & Biochemistry at SFU in Burnaby. Core work includes data structures, algorithms, databases, discrete math, probability/statistics, and biomedical computing."
+    },
+    {
+      "school": "MacEwan University",
+      "logoUrl": "/logos/macewan-logo.jpg",
+      "degree": "Bachelor of Science in Computer Science",
+      "year": "2021",
+      "dates": "December 2021 – April 2021",
+      "location": "Edmonton, Alberta",
+      "program": "One semester in Computer Science.",
+      "summary": "Completed one semester in the BSc Computer Science program before continuing studies at SFU.",
+      "details": "Completed one semester of Computer Science coursework at MacEwan University in Edmonton, Alberta, then transitioned to SFU."
+    },
+    {
+      "school": "Archbishop MacDonald",
+      "logoUrl": "/logos/mac-logo.jpg",
+      "degree": "High School",
+      "year": null,
+      "summary": "Completed high school in Edmonton with a strong math and science foundation.",
+      "details": "Graduated from Archbishop MacDonald in Edmonton, where I built the academic foundation that led into computing science and life sciences."
+    }
+  ],
+  "experience": [
+    { "title": "Retail Associate", "company": "BCLDB", "logoUrl": "/logos/bcldb-logo.jpg", "dates": "June 2025 – Current", "description": "Handled regulated products, inventory tracking, and customer verification. Operated under strict compliance and cash-handling procedures." },
+    { "title": "Sales Associate", "company": "Sherwood Park Toyota", "logoUrl": "/logos/toyota-logo.jpg", "dates": "Summer 2025", "description": "Managed online vehicle sales and customer correspondence. Customer-facing sales and contracts in a high-volume dealership." },
+    { "title": "Construction Labourer", "company": "Various Sites", "dates": "Summers 2020–2024", "description": "Performed physically demanding work including scaffolding, concrete, and site setup. Worked long shifts in safety-critical environments requiring reliability and teamwork." },
+    { "title": "Lifeguard & Swim Instructor", "company": "YMCA", "logoUrl": "/logos/ymca-logo.jpg", "dates": "2018–2020", "description": "Ensured public safety and emergency response in regulated aquatic facilities. Instructed children and adults; maintained certifications and safety compliance." },
+    { "title": "Grounds Crew", "company": "Golf Course", "dates": "Summer 2020", "description": "Maintained course grounds and facilities under early-morning and time-critical schedules. Operated equipment and followed safety procedures in outdoor work environments." }
+  ],
+  "skills": {
+    "Software": ["Python", "C/C++", "JavaScript", "TI-BASIC", "SQL"],
+    "Systems & Tools": ["Linux", "Git", "Docker", "Google Cloud Run", "AWS", "Firebase"],
+    "ML / Data": ["PyTorch", "HDBSCAN", "OCR pipelines", "Clustering"],
+    "Hardware": ["Arduino", "RF modules", "embedded systems", "soldering"],
+    "Full Stack": ["React", "Express.js", "Firebase", "AWS Lambda", "Supabase"],
+    "Mobile": ["React Native", "Swift"],
+    "Other": ["Unity", "Game Maker", "DaVinci Resolve", "Blender"]
+  }
+}
