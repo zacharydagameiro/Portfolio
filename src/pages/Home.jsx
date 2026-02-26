@@ -135,14 +135,14 @@ export default function Home() {
         </section>
 
         {featured.length > 0 && (
-          <section className="border-l-4 border-l-blue-600 pl-4">
+          <section className="border-l-0 pl-0 sm:border-l-4 sm:border-l-blue-600 sm:pl-4">
             <h2 className="text-xl font-semibold text-slate-900 flex items-center gap-2">
               <SectionIcon type="featured" className="h-5 w-5 text-blue-600" />
               Featured projects
             </h2>
             <ul className="mt-4 grid gap-5 sm:grid-cols-2">
               {featured.map((project) => (
-                <li key={project.slug}>
+                <li key={project.slug} className="min-w-0">
                   <ProjectCard project={project} />
                 </li>
               ))}
@@ -157,7 +157,7 @@ export default function Home() {
         )}
 
         {experience.length > 0 && (
-          <section className="border-l-4 border-l-emerald-600 pl-4">
+          <section className="border-l-0 pl-0 sm:border-l-4 sm:border-l-emerald-600 sm:pl-4">
             <h2 className="text-xl font-semibold text-slate-900 flex items-center gap-2">
               <SectionIcon type="experience" className="h-5 w-5 text-emerald-600" />
               Experience
@@ -209,7 +209,7 @@ export default function Home() {
         )}
       </div>
 
-      <div className="space-y-6 lg:sticky lg:top-28 lg:self-start lg:max-h-[calc(100vh-8rem)] lg:overflow-y-auto lg:pr-1">
+      <div className="space-y-6 lg:sticky lg:top-28 lg:self-start">
         <HomeSidebar about={aboutData} />
         {education.length > 0 && (
           <aside className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">

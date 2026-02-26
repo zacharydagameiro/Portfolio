@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import projectsData from '../data/projects.json'
 import ProjectCard from '../components/ProjectCard'
 import { useSearchParams } from 'react-router-dom'
@@ -38,6 +38,8 @@ export default function ProjectList() {
   const tabScrollRef = useRef(null)
   const tabListRef = useRef(null)
   const tabButtonRefs = useRef({})
+  const projectItemRefs = useRef({})
+  const previousProjectRectsRef = useRef(new Map())
   const [tabOverflowState, setTabOverflowState] = useState({ showLeft: false, showRight: false })
   const [activePillStyle, setActivePillStyle] = useState({ left: 0, width: 0, ready: false })
   const tabParam = searchParams.get('tab')
@@ -163,6 +165,78 @@ export default function ProjectList() {
     window.addEventListener('resize', updateActivePill)
     return () => window.removeEventListener('resize', updateActivePill)
   }, [tabs, activeTab, updateActivePill])
+
+  useLayoutEffect(() => {
+    const prefersReducedMotion =
+      typeof window !== 'undefined' &&
+      typeof window.matchMedia === 'function' &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+    const nextRects = new Map()
+    filteredAndSorted.forEach((project) => {
+      const el = projectItemRefs.current[project.slug]
+      if (!el) return
+      nextRects.set(project.slug, el.getBoundingClientRect())
+    })
+
+    if (!prefersReducedMotion) {
+      filteredAndSorted.forEach((project, index) => {
+        const el = projectItemRefs.current[project.slug]
+        const nextRect = nextRects.get(project.slug)
+        if (!el || !nextRect) return
+
+        const prevRect = previousProjectRectsRef.current.get(project.slug)
+        const isExistingProject = Boolean(prevRect)
+        const deltaX = isExistingProject ? prevRect.left - nextRect.left : 0
+        const deltaY = isExistingProject ? prevRect.top - nextRect.top : 0
+
+        if (isExistingProject && (Math.abs(deltaX) > 0.5 || Math.abs(deltaY) > 0.5)) {
+          el.animate(
+            [
+              {
+                transform: `translate(${deltaX}px, ${deltaY}px) scale(0.985)`,
+                opacity: 0.92,
+              },
+              {
+                transform: 'translate(0, 0) scale(1)',
+                opacity: 1,
+              },
+            ],
+            {
+              duration: 360,
+              easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
+              fill: 'both',
+            }
+          )
+          return
+        }
+
+        if (!isExistingProject) {
+          el.animate(
+            [
+              { transform: 'translateY(10px) scale(0.98)', opacity: 0 },
+              { transform: 'translateY(0) scale(1)', opacity: 1 },
+            ],
+            {
+              duration: 260 + Math.min(index, 6) * 20,
+              easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
+              fill: 'both',
+            }
+          )
+        }
+      })
+    }
+
+    previousProjectRectsRef.current = nextRects
+  }, [filteredAndSorted])
+
+  const setProjectItemRef = useCallback((slug, node) => {
+    if (node) {
+      projectItemRefs.current[slug] = node
+      return
+    }
+    delete projectItemRefs.current[slug]
+  }, [])
 
   const handleTabChange = (tabId) => {
     const nextParams = new URLSearchParams(searchParams)
@@ -295,7 +369,11 @@ export default function ProjectList() {
         aria-labelledby={`tab-${activeTab}`}
       >
         {filteredAndSorted.map((project) => (
-          <li key={project.slug}>
+          <li
+            key={project.slug}
+            ref={(node) => setProjectItemRef(project.slug, node)}
+            className="will-change-transform"
+          >
             <ProjectCard project={project} listSearch={listSearch} />
           </li>
         ))}

@@ -23,6 +23,51 @@ const getCategoryIconColorClass = (category) =>
         ? 'text-sky-500'
         : 'text-slate-300'
 
+const ProjectLinkIcon = ({ type, className = 'h-3.5 w-3.5' }) => {
+  if (type === 'google') {
+    return (
+      <svg className={className} viewBox="0 0 24 24" aria-hidden>
+        <path
+          fill="#EA4335"
+          d="M12 10.2v3.9h5.5c-.2 1.3-1.5 3.8-5.5 3.8-3.3 0-6-2.7-6-6s2.7-6 6-6c1.9 0 3.2.8 3.9 1.5l2.7-2.6C16.9 3.2 14.7 2.2 12 2.2 6.6 2.2 2.2 6.6 2.2 12s4.4 9.8 9.8 9.8c5.6 0 9.3-4 9.3-9.6 0-.6-.1-1.1-.2-1.6H12Z"
+        />
+        <path
+          fill="#34A853"
+          d="M2.2 12c0 5.4 4.4 9.8 9.8 9.8 5.6 0 9.3-4 9.3-9.6 0-.6-.1-1.1-.2-1.6H12v3.9h5.5c-.2 1.3-1.5 3.8-5.5 3.8-3.3 0-6-2.7-6-6Z"
+        />
+        <path fill="#FBBC05" d="M4.5 7.4 7.7 9.7c.9-1.8 2.5-3 4.3-3 1.9 0 3.2.8 3.9 1.5l2.7-2.6C16.9 3.2 14.7 2.2 12 2.2c-3.8 0-7.2 2.2-8.8 5.2Z" />
+        <path fill="#4285F4" d="M2.2 12c0 1.6.4 3.2 1.3 4.6l3.4-2.6c-.3-.6-.5-1.3-.5-2s.2-1.4.5-2L3.5 7.4A9.5 9.5 0 0 0 2.2 12Z" />
+      </svg>
+    )
+  }
+
+  if (type === 'github') {
+    return (
+      <svg className={className} viewBox="0 0 16 16" fill="currentColor" aria-hidden>
+        <path d="M8 0C3.58 0 0 3.58 0 8a8.002 8.002 0 0 0 5.47 7.59c.4.08.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.95-.82-1.15-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.5-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82A7.56 7.56 0 0 1 8 3.8c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.002 8.002 0 0 0 16 8c0-4.42-3.58-8-8-8Z" />
+      </svg>
+    )
+  }
+
+  return (
+    <svg className={className} fill="none" viewBox="0 0 24 24" strokeWidth={1.7} stroke="currentColor" aria-hidden>
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M3.75 12A8.25 8.25 0 0 1 12 3.75m0 0A8.25 8.25 0 0 1 20.25 12M12 3.75c2.2 2.12 3.5 5.02 3.5 8.25S14.2 18.13 12 20.25m0-16.5c-2.2 2.12-3.5 5.02-3.5 8.25S9.8 18.13 12 20.25m-7.85-5.25h15.7"
+      />
+    </svg>
+  )
+}
+
+const getProjectLinkType = (link, fallbackType) => {
+  if (!link || typeof link.url !== 'string') return fallbackType
+  const url = link.url.toLowerCase()
+  if (/(?:^|\.)google\./.test(url) || /run\.app/.test(url)) return 'google'
+  if (url.includes('github.com')) return 'github'
+  return fallbackType
+}
+
 export function ProjectIcon({ category, className = 'h-4 w-4' }) {
   // Default: folder (general project)
   if (!category) {
@@ -146,7 +191,7 @@ export default function ProjectCard({ project, listSearch = '' }) {
   return (
     <Link
       to={`/projects/${slug}${listSearch}`}
-      className="relative flex h-full flex-col rounded-xl border border-slate-200 bg-slate-50 p-5 shadow-sm transition hover:border-slate-300 hover:shadow-md hover:-translate-y-0.5"
+      className="relative flex h-full w-full min-w-0 flex-col overflow-hidden rounded-xl border border-slate-200 bg-slate-50 p-5 shadow-sm transition hover:border-slate-300 hover:shadow-md hover:-translate-y-0.5"
     >
       {featured && (
         <span
@@ -206,24 +251,7 @@ export default function ProjectCard({ project, listSearch = '' }) {
           <span className="text-[11px] text-slate-400">{year}</span>
         </div>
         {(demoLink || repoLink) && (
-          <div className="flex flex-wrap gap-2">
-            {demoLink && (
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.preventDefault()
-                  e.stopPropagation()
-                  window.open(demoLink.url, '_blank', 'noopener,noreferrer')
-                }}
-                className="inline-flex items-center rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-medium text-slate-700 hover:bg-slate-50"
-                title={getProjectLinkText(demoLink)}
-              >
-                <span className="max-w-[11rem] truncate">{getProjectLinkText(demoLink)}</span>
-                <span className="ml-1" aria-hidden>
-                  ↗
-                </span>
-              </button>
-            )}
+          <div className="flex min-w-0 flex-wrap items-center gap-2 sm:flex-nowrap">
             {repoLink && (
               <button
                 type="button"
@@ -232,18 +260,34 @@ export default function ProjectCard({ project, listSearch = '' }) {
                   e.stopPropagation()
                   window.open(repoLink.url, '_blank', 'noopener,noreferrer')
                 }}
-                className="inline-flex items-center rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-medium text-slate-700 hover:bg-slate-50"
+                className="inline-flex min-w-0 max-w-full flex-1 items-center rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-medium text-slate-700 hover:bg-slate-50"
                 title={getProjectLinkText(repoLink)}
               >
-                <span className="max-w-[11rem] truncate">{getProjectLinkText(repoLink)}</span>
+                <ProjectLinkIcon type={getProjectLinkType(repoLink, 'repo')} className="mr-1.5 h-3.5 w-3.5 shrink-0 text-slate-500" />
+                <span className="min-w-0 truncate">{getProjectLinkText(repoLink)}</span>
                 <span className="ml-1" aria-hidden>
                   ↗
                 </span>
               </button>
             )}
-            <span className="inline-flex items-center rounded-full bg-slate-900 px-3 py-1 text-xs font-medium text-white">
-              Case study
-            </span>
+            {demoLink && (
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault()
+                  e.stopPropagation()
+                  window.open(demoLink.url, '_blank', 'noopener,noreferrer')
+                }}
+                className="inline-flex min-w-0 max-w-full flex-1 items-center rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-medium text-slate-700 hover:bg-slate-50"
+                title={getProjectLinkText(demoLink)}
+              >
+                <ProjectLinkIcon type={getProjectLinkType(demoLink, 'demo')} className="mr-1.5 h-3.5 w-3.5 shrink-0 text-slate-500" />
+                <span className="min-w-0 truncate">{getProjectLinkText(demoLink)}</span>
+                <span className="ml-1" aria-hidden>
+                  ↗
+                </span>
+              </button>
+            )}
           </div>
         )}
       </div>

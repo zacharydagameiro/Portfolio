@@ -27,7 +27,7 @@
       "dates": "September 2021 – Expected December 2026",
       "location": "Burnaby, BC",
       "program": "Joint major in Computing Science and Microbiology & Biochemistry (MBB).",
-      "summary": "Joint major in Computing Science + MBB, focused on systems, applied ML, and biomedical computing.",
+      "summary": "Joint major in Computing Science and Microbiology",
       "details": "Pursuing a BSc joint major in Computing Science and Microbiology & Biochemistry at SFU in Burnaby. Core work includes data structures, algorithms, databases, discrete math, probability/statistics, and biomedical computing."
     },
     {
@@ -38,15 +38,16 @@
       "dates": "December 2021 – April 2021",
       "location": "Edmonton, Alberta",
       "program": "One semester in Computer Science.",
-      "summary": "Completed one semester in the BSc Computer Science program before continuing studies at SFU.",
+      "summary": "Computer Science studies at MacEwan University.",
       "details": "Completed one semester of Computer Science coursework at MacEwan University in Edmonton, Alberta, then transitioned to SFU."
     },
     {
       "school": "Archbishop MacDonald",
       "logoUrl": "/logos/mac-logo.jpg",
       "degree": "High School",
-      "year": null,
-      "summary": "Completed high school in Edmonton with a strong math and science foundation.",
+      "year": "2020",
+      "dates": "September 2017 – June 2020",
+      "summary": "Honours high school graduate.",
       "details": "Graduated from Archbishop MacDonald in Edmonton, where I built the academic foundation that led into computing science and life sciences."
     }
   ],
