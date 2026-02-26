@@ -5,8 +5,9 @@
     <title>Redirecting...</title>
     <script>
       // GitHub Pages SPA fallback redirect.
-      // pathSegmentsToKeep = 1 for project pages like /Portfolio/.
-      const pathSegmentsToKeep = 1
+      // Replaced at deploy time by workflow:
+      // 0 for root user pages, 1 for /<repo>/ project pages.
+      const pathSegmentsToKeep = __PATH_SEGMENTS_TO_KEEP__
       const l = window.location
       l.replace(
         l.protocol +

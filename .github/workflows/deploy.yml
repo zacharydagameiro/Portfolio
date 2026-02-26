@@ -21,6 +21,21 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Determine base path
+        id: base
+        shell: bash
+        run: |
+          REPO_NAME="${GITHUB_REPOSITORY#*/}"
+          OWNER_NAME="${GITHUB_REPOSITORY_OWNER}"
+
+          if [[ "${REPO_NAME,,}" == "${OWNER_NAME,,}.github.io" ]]; then
+            echo "base_path=/" >> "$GITHUB_OUTPUT"
+            echo "path_segments_to_keep=0" >> "$GITHUB_OUTPUT"
+          else
+            echo "base_path=/${REPO_NAME}/" >> "$GITHUB_OUTPUT"
+            echo "path_segments_to_keep=1" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
@@ -31,7 +46,13 @@ jobs:
         run: npm ci
 
       - name: Build site
-        run: BASE_PATH="/${{ github.event.repository.name }}/" npm run build
+        run: BASE_PATH="${{ steps.base.outputs.base_path }}" npm run build
+
+      - name: Configure SPA fallback
+        shell: bash
+        run: |
+          sed -i.bak "s/__PATH_SEGMENTS_TO_KEEP__/${{ steps.base.outputs.path_segments_to_keep }}/g" dist/404.html
+          rm -f dist/404.html.bak
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
