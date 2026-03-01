@@ -1,0 +1,150 @@
+\documentclass[letterpaper,10pt]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage[empty]{fullpage}
+\usepackage{titlesec}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{xcolor}
+\usepackage{tabularx}
+\input{glyphtounicode}
+
+\pagestyle{empty}
+\pdfgentounicode=1
+\urlstyle{same}
+\raggedright
+\raggedbottom
+\setlength{\tabcolsep}{0in}
+
+% Margins
+\addtolength{\oddsidemargin}{-0.6in}
+\addtolength{\evensidemargin}{-0.6in}
+\addtolength{\textwidth}{1.2in}
+\addtolength{\topmargin}{-0.7in}
+\addtolength{\textheight}{1.35in}
+
+% Section formatting
+\titleformat{\section}{
+  \vspace{-6pt}\scshape\raggedright\large
+}{}{0em}{}[\color{black}\titlerule \vspace{-6pt}]
+
+% Custom commands
+\newcommand{\resumeItem}[1]{
+  \item \small{#1}
+}
+
+\newcommand{\resumeSubheading}[4]{
+  \vspace{-2pt}\item
+    \begin{tabular*}{0.97\textwidth}[t]{l@{\extracolsep{\fill}}r}
+      \textbf{#1} & #2 \\
+      \textit{\small #3} & \textit{\small #4} \\
+    \end{tabular*}\vspace{-8pt}
+}
+
+\newcommand{\resumeProjectHeading}[2]{
+  \vspace{-2pt}\item
+    \begin{tabular*}{0.97\textwidth}[t]{l@{\extracolsep{\fill}}r}
+      \small #1 & #2 \\
+    \end{tabular*}\vspace{-8pt}
+}
+
+\newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=0.15in,label={}]}
+\newcommand{\resumeSubHeadingListEnd}{\end{itemize}}
+\newcommand{\resumeItemListStart}{\begin{itemize}[leftmargin=0.18in,itemsep=2pt,topsep=2pt]}
+\newcommand{\resumeItemListEnd}{\end{itemize}\vspace{-6pt}}
+
+\begin{document}
+
+\begin{center}
+    \textbf{\Huge Zachary Gameiro} \\ \vspace{3pt}
+    \small Burnaby, BC \,|\, (780) 340-9772 \,|\, \href{mailto:zachary_gameiro@sfu.ca}{zachary\_gameiro@sfu.ca} \,|\, 
+    \href{https://www.linkedin.com/in/zachary-gameiro/}{linkedin.com/in/zachary-gameiro} \,|\, 
+    \href{https://github.com/zacharydagameiro}{github.com/zacharydagameiro}
+\end{center}
+
+\section{Education}
+\resumeSubHeadingListStart
+  \resumeSubheading
+    {Simon Fraser University}{Burnaby, BC}
+    {B.Sc., Joint Major in Computing Science and Biochemistry/Microbiology}{Expected May 2027}
+\resumeSubHeadingListEnd
+
+\section{Technical Skills}
+\begin{itemize}[leftmargin=0.15in, label={}]
+  \small{\item{
+    \textbf{Languages:} Python, C/C++, JavaScript, SQL, TI-BASIC \\
+    \textbf{Frameworks \& Tools:} React, React Native, Node.js/Express, Git, Docker, Linux, Google Cloud Run, Firebase, Supabase, AWS \\
+    \textbf{ML / Data:} PyTorch, PaddleOCR, HDBSCAN, DBSCAN, OCR pipelines, graph embeddings \\
+    \textbf{Hardware:} Arduino, RF modules, embedded systems, soldering
+  }}
+\end{itemize}
+
+\section{Projects}
+\resumeSubHeadingListStart
+
+  \resumeProjectHeading
+    {\textbf{Receipt OCR to Structured Transaction Pipeline} $|$ \emph{Python, PaddleOCR, Docker, Cloud Run, LLM}}{2025}
+    \resumeItemListStart
+      \resumeItem{Built a two-stage receipt ingestion pipeline that converts receipt images into validated transaction JSON for merchant, date, totals, tax, and line items.}
+      \resumeItem{Replaced the earlier multimodal-LLM OCR path with self-hosted PaddleOCR on Google Cloud Run, improving OCR throughput by about 200\% while reducing external API dependence.}
+      \resumeItem{Used OCR bounding boxes to reconstruct layout-aware text and added schema-first normalization so downstream parsing produced more consistent records.}
+    \resumeItemListEnd
+
+  \resumeProjectHeading
+    {\textbf{Embedded Wireless Messaging on TI-84 Calculators} $|$ \emph{Arduino, C/C++, TI-BASIC, nRF24L01}}{2020}
+    \resumeItemListStart
+      \resumeItem{Designed and assembled a wireless messaging system by integrating an Arduino Nano and RF transceiver inside TI-84 calculators.}
+      \resumeItem{Reverse-engineered the TI-84 link interface and built Arduino firmware plus a TI-BASIC chat client for bidirectional communication.}
+      \resumeItem{Debugged timing, signal, and power issues to achieve stable wireless messaging at roughly 30 feet.}
+    \resumeItemListEnd
+
+  \resumeProjectHeading
+    {\textbf{Auto Sales PDF Automator} $|$ \emph{Python, PDF Processing, Validation}}{2025}
+    \resumeItemListStart
+      \resumeItem{Automated dealership paperwork generation by mapping structured customer and vehicle data into standardized PDF document templates.}
+      \resumeItem{Implemented validation and normalization for required fields, dates, pricing, and input cleanup to reduce incomplete or inconsistent submissions.}
+      \resumeItem{Collapsed repetitive multi-form entry into a single workflow, reducing redundant data entry and review overhead for staff.}
+    \resumeItemListEnd
+
+  \resumeProjectHeading
+    {\textbf{MIRO-Based SMLM Clustering Pipeline} $|$ \emph{Python, PyTorch, MIRO, HDBSCAN}}{2025}
+    \resumeItemListStart
+      \resumeItem{Built a clustering pipeline for single-molecule localization microscopy data using MIRO-based graph embeddings and density-based clustering.}
+      \resumeItem{Reproduced and trained MIRO on custom localization data using mutual k-nearest-neighbor graphs.}
+      \resumeItem{Applied DBSCAN/HDBSCAN to learned embeddings to identify molecular structures and generate reconstruction outputs.}
+    \resumeItemListEnd
+
+\resumeSubHeadingListEnd
+
+\section{Experience}
+\resumeSubHeadingListStart
+
+  \resumeSubheading
+    {BCLDB}{BC, Canada}
+    {Retail Associate}{June 2025 -- Present}
+    \resumeItemListStart
+      \resumeItem{Handle regulated products, customer verification, and inventory workflows under strict compliance requirements.}
+      \resumeItem{Maintain accuracy in cash handling and front-line operations during high-volume shifts.}
+    \resumeItemListEnd
+
+  \resumeSubheading
+    {Sherwood Park Toyota}{Sherwood Park, AB}
+    {Sales Associate}{Summer 2025}
+    \resumeItemListStart
+      \resumeItem{Managed online sales inquiries and customer correspondence in a high-volume dealership environment.}
+      \resumeItem{Executed customer-facing sales and contract workflows with accuracy under time pressure.}
+    \resumeItemListEnd
+
+  \resumeSubheading
+    {Various Sites}{Canada}
+    {Construction Labourer}{Summers 2020 -- 2024}
+    \resumeItemListStart
+      \resumeItem{Worked in safety-critical crews performing scaffolding, concrete, and site setup across changing jobsite conditions.}
+      \resumeItem{Built reliability and teamwork under physical workloads, shifting constraints, and tight schedules.}
+    \resumeItemListEnd
+
+\resumeSubHeadingListEnd
+
+\end{document}

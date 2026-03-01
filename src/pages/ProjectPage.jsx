@@ -9,6 +9,7 @@ import { SectionIcon } from '../components/sidebar/SidebarIcons'
 import { SITE_DESCRIPTION } from '../data/siteMeta'
 import { toProjectLink, getProjectLinkText } from '../utils/projectLinks'
 import { resolveAssetUrl } from '../utils/assetUrl'
+import { DEFAULT_GLOW_RGB, getImageGlowRgb } from '../utils/imageAccent'
 
 const DEFAULT_TITLE = 'Zachary Gameiro — CS Portfolio'
 const DEFAULT_PROJECT_IMAGE = resolveAssetUrl('/profile.jpg')
@@ -75,9 +76,12 @@ export default function ProjectPage() {
         poster: resolveAssetUrl(item?.poster)
       }))
     : []
+  const resolvedCoverImageUrl = resolveAssetUrl(project?.coverImageUrl)
+  const hasCover = Boolean(resolvedCoverImageUrl)
   const hasScreenshots = screenshotsList.length > 0
   const [lightboxIndex, setLightboxIndex] = useState(null)
   const [showMediaCue, setShowMediaCue] = useState(false)
+  const [heroGlowRgb, setHeroGlowRgb] = useState(null)
   const mediaSectionRef = useRef(null)
   const isLightboxOpen = lightboxIndex !== null && screenshotsList.length > 0
   const activeScreenshot = isLightboxOpen ? screenshotsList[lightboxIndex] : null
@@ -190,6 +194,26 @@ export default function ProjectPage() {
     }
   }, [hasScreenshots, slug])
 
+  useEffect(() => {
+    let isCanceled = false
+
+    if (!hasCover) {
+      setHeroGlowRgb(null)
+      return () => {
+        isCanceled = true
+      }
+    }
+
+    getImageGlowRgb(resolvedCoverImageUrl).then((glowRgb) => {
+      if (isCanceled) return
+      setHeroGlowRgb(glowRgb || DEFAULT_GLOW_RGB)
+    })
+
+    return () => {
+      isCanceled = true
+    }
+  }, [hasCover, resolvedCoverImageUrl])
+
   if (!project) {
     return (
       <div className="text-center py-12">
@@ -213,7 +237,6 @@ export default function ProjectPage() {
     repoUrl,
     demoUrl,
     category,
-    coverImageUrl,
     valueProp,
     stack,
     status,
@@ -253,9 +276,11 @@ export default function ProjectPage() {
         : category === 'freelance'
           ? 'from-sky-500 to-sky-800'
           : 'from-slate-700 to-slate-900'
-
-  const resolvedCoverImageUrl = resolveAssetUrl(coverImageUrl)
-  const hasCover = Boolean(resolvedCoverImageUrl)
+  const heroStyle = hasCover
+    ? {
+        '--project-hero-glow-rgb': heroGlowRgb || DEFAULT_GLOW_RGB
+      }
+    : undefined
   const demoLink = toProjectLink(demoUrl)
   const repoLink = toProjectLink(repoUrl)
   const caseStudyLink = toProjectLink(caseStudyUrl)
@@ -352,7 +377,7 @@ export default function ProjectPage() {
   }
 
   return (
-    <article className="overflow-x-clip pb-12">
+    <article className="pb-12">
       <div className="-mt-6">
         {/* Back link above the hero across all breakpoints */}
         <div>
@@ -363,8 +388,10 @@ export default function ProjectPage() {
 
         {/* HERO / COVER */}
         <div
+          style={heroStyle}
           className={[
-            'relative overflow-hidden bg-gradient-to-br',
+            'project-hero relative z-10 bg-gradient-to-br',
+            hasCover ? 'project-hero--with-cover' : '',
             bannerGradient,
 
             // Height: allow more room on smaller screens but shrink on desktop
@@ -380,29 +407,32 @@ export default function ProjectPage() {
             'mb-0 sm:mb-10'
           ].join(' ')}
         >
-          {hasCover && (
-            <>
-              <div
-                className="absolute inset-0 bg-cover bg-center"
-                style={{ backgroundImage: `url(${resolvedCoverImageUrl})` }}
-                aria-hidden
-              />
+          {hasCover && <div className="project-hero__halo" aria-hidden />}
 
-              {/* Stronger overlays for readability (key fix) */}
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/35 to-slate-900/10" />
-              <div className="absolute inset-0 bg-gradient-to-r from-slate-950/85 via-slate-950/55 to-transparent" />
-            </>
-          )}
+          <div className="project-hero__clip relative h-full overflow-hidden rounded-[inherit]">
+            {hasCover && (
+              <>
+                <div
+                  className="absolute inset-0 bg-cover bg-center"
+                  style={{ backgroundImage: `url(${resolvedCoverImageUrl})` }}
+                  aria-hidden
+                />
 
-          {!hasCover && (
-            <>
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-slate-900/35 to-transparent" />
-              <div className="absolute inset-0 bg-gradient-to-r from-slate-950/80 via-slate-950/45 to-transparent" />
-            </>
-          )}
+                {/* Stronger overlays for readability (key fix) */}
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/35 to-slate-900/10" />
+                <div className="absolute inset-0 bg-gradient-to-r from-slate-950/85 via-slate-950/55 to-transparent" />
+              </>
+            )}
 
-          <div className="relative h-full">
-            <div className="flex h-full w-full flex-col justify-end px-4 py-6 sm:px-8 sm:py-6">
+            {!hasCover && (
+              <>
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-slate-900/35 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-r from-slate-950/80 via-slate-950/45 to-transparent" />
+              </>
+            )}
+
+            <div className="project-hero__content relative h-full">
+              <div className="flex h-full w-full flex-col justify-end px-4 py-6 sm:px-8 sm:py-6">
               {/* Row 1: icon in the top-left */}
               <div className="flex">
                 <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-950/60 ring-2 ring-white/10">
@@ -495,6 +525,7 @@ export default function ProjectPage() {
                 )}
               </div>
             </div>
+          </div>
           </div>
         </div>
 
